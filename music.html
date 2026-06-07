@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#87CEEB">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
 </head>
 <body class="music-body">
 
@@ -21,7 +22,6 @@
   </div>
 </header>
 
-<!-- Favorites Panel -->
 <div id="favPanel" class="fav-panel hidden">
   <div class="fav-header">
     <h3><i class="fa-solid fa-heart"></i> Favorite Songs</h3>
@@ -31,15 +31,12 @@
   <p id="emptyFav" class="empty-msg">No favorites yet</p>
 </div>
 
-<!-- Sleep Timer -->
 <div id="sleepTimer" class="sleep-timer hidden">
   <div class="sleep-card">
     <h3><i class="fa-solid fa-moon"></i> Sleep Timer</h3>
     <div class="timer-options">
-      <button data-min="15">15 min</button>
-      <button data-min="30">30 min</button>
-      <button data-min="45">45 min</button>
-      <button data-min="60">60 min</button>
+      <button data-min="15">15 min</button><button data-min="30">30 min</button>
+      <button data-min="45">45 min</button><button data-min="60">60 min</button>
       <button data-min="0">Off</button>
     </div>
     <p id="sleepStatus" class="sleep-status">Timer off</p>
@@ -48,18 +45,14 @@
 
 <main class="music-container">
   <div class="player-card">
-    <div class="album-art">
-      <i class="fa-solid fa-compact-disc" id="discIcon"></i>
-    </div>
+    <div class="album-art"><i class="fa-solid fa-compact-disc" id="discIcon"></i></div>
     <h2 id="songTitle" class="song-title">No song playing</h2>
     <p id="artistName" class="artist-name">Upload songs to start</p>
-    
     <div class="progress-container">
       <span id="currentTime">0:00</span>
       <input type="range" id="progressBar" min="0" max="100" value="0" class="progress-bar">
       <span id="duration">0:00</span>
     </div>
-    
     <div class="controls">
       <button id="shuffleBtn" class="ctrl-btn small"><i class="fa-solid fa-shuffle"></i></button>
       <button id="prevBtn" class="ctrl-btn"><i class="fa-solid fa-backward"></i></button>
@@ -69,14 +62,12 @@
       <button id="nextBtn" class="ctrl-btn"><i class="fa-solid fa-forward"></i></button>
       <button id="repeatBtn" class="ctrl-btn small"><i class="fa-solid fa-repeat"></i></button>
     </div>
-    
     <div class="player-extras">
       <button id="favCurrentBtn" class="extra-btn"><i class="fa-regular fa-heart"></i></button>
       <button id="sleepTimerBtn" class="extra-btn"><i class="fa-solid fa-moon"></i></button>
       <button id="bgPlayBtn" class="extra-btn"><i class="fa-solid fa-infinity"></i></button>
     </div>
   </div>
-  
   <div class="playlist">
     <h3><i class="fa-solid fa-list"></i> Playlist</h3>
     <ul id="songList" class="song-list"></ul>
@@ -94,12 +85,7 @@
 <script>
 let songs = JSON.parse(localStorage.getItem('songs') || '[]');
 let favSongs = JSON.parse(localStorage.getItem('favSongs') || '[]');
-let currentIndex = 0;
-let isPlaying = false;
-let isShuffle = false;
-let isRepeat = false;
-let sleepTimerId = null;
-let sleepEndTime = null;
+let currentIndex = 0, isPlaying = false, isShuffle = false, isRepeat = false, sleepTimerId = null, sleepEndTime = null;
 
 const audio = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
@@ -119,30 +105,18 @@ const discIcon = document.getElementById('discIcon');
 
 function renderPlaylist() {
   songList.innerHTML = '';
-  if (songs.length === 0) {
-    emptyMsg.style.display = 'block';
-    return;
-  }
+  if (songs.length === 0) { emptyMsg.style.display = 'block'; return; }
   emptyMsg.style.display = 'none';
   songs.forEach((song, i) => {
     const li = document.createElement('li');
     li.className = `song-item ${i === currentIndex ? 'active' : ''}`;
     const isFav = favSongs.some(f => f.name === song.name);
     li.innerHTML = `
-      <div class="song-info" data-index="${i}">
-        <i class="fa-solid fa-music"></i>
-        <div>
-          <div class="song-name">${song.name}</div>
-          <div class="song-meta">Track ${i + 1}</div>
-        </div>
-      </div>
+      <div class="song-info" data-index="${i}"><i class="fa-solid fa-music"></i><div><div class="song-name">${song.name}</div><div class="song-meta">Track ${i + 1}</div></div></div>
       <div class="song-actions">
-        <button class="fav-toggle" data-index="${i}">
-          <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
-        </button>
+        <button class="fav-toggle" data-index="${i}"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>
         <button class="delete-btn" data-index="${i}"><i class="fa-solid fa-trash"></i></button>
-      </div>
-    `;
+      </div>`;
     songList.appendChild(li);
   });
 }
@@ -151,24 +125,14 @@ function renderFavList() {
   const favList = document.getElementById('favList');
   const emptyFav = document.getElementById('emptyFav');
   favList.innerHTML = '';
-  if (favSongs.length === 0) {
-    emptyFav.style.display = 'block';
-    return;
-  }
+  if (favSongs.length === 0) { emptyFav.style.display = 'block'; return; }
   emptyFav.style.display = 'none';
   favSongs.forEach((song, i) => {
     const li = document.createElement('li');
     li.className = 'song-item';
     li.innerHTML = `
-      <div class="song-info" data-name="${song.name}">
-        <i class="fa-solid fa-heart" style="color:#E74C3C"></i>
-        <div>
-          <div class="song-name">${song.name}</div>
-          <div class="song-meta">Favorite</div>
-        </div>
-      </div>
-      <button class="delete-fav" data-name="${song.name}"><i class="fa-solid fa-xmark"></i></button>
-    `;
+      <div class="song-info" data-name="${song.name}"><i class="fa-solid fa-heart" style="color:#E74C3C"></i><div><div class="song-name">${song.name}</div><div class="song-meta">Favorite</div></div></div>
+      <button class="delete-fav" data-name="${song.name}"><i class="fa-solid fa-xmark"></i></button>`;
     favList.appendChild(li);
   });
 }
@@ -178,8 +142,7 @@ function loadSong(index) {
   currentIndex = index;
   audio.src = songs[index].data;
   songTitle.textContent = songs[index].name;
-  updateFavBtn();
-  renderPlaylist();
+  updateFavBtn(); renderPlaylist();
 }
 
 function updateFavBtn() {
@@ -187,78 +150,29 @@ function updateFavBtn() {
   if (songs.length === 0) return;
   const isFav = favSongs.some(f => f.name === songs[currentIndex].name);
   btn.innerHTML = `<i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>`;
-  if (isFav) btn.style.color = '#E74C3C';
-  else btn.style.color = '';
+  btn.style.color = isFav ? '#E74C3C' : '';
 }
 
 function togglePlay() {
   if (songs.length === 0) return;
   if (!audio.src) loadSong(0);
-  if (isPlaying) {
-    audio.pause();
-    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-    discIcon.classList.remove('spinning');
-  } else {
-    audio.play();
-    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    discIcon.classList.add('spinning');
-  }
+  if (isPlaying) { audio.pause(); playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; discIcon.classList.remove('spinning'); } 
+  else { audio.play(); playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; discIcon.classList.add('spinning'); }
   isPlaying = !isPlaying;
 }
 
 playBtn.addEventListener('click', togglePlay);
-
-prevBtn.addEventListener('click', () => {
-  if (songs.length === 0) return;
-  if (isShuffle) {
-    currentIndex = Math.floor(Math.random() * songs.length);
-  } else {
-    currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-  }
-  loadSong(currentIndex);
-  if (isPlaying) audio.play();
-});
-
-nextBtn.addEventListener('click', () => {
-  if (songs.length === 0) return;
-  if (isShuffle) {
-    currentIndex = Math.floor(Math.random() * songs.length);
-  } else {
-    currentIndex = (currentIndex + 1) % songs.length;
-  }
-  loadSong(currentIndex);
-  if (isPlaying) audio.play();
-});
-
+prevBtn.addEventListener('click', () => { if (songs.length === 0) return; currentIndex = isShuffle ? Math.floor(Math.random() * songs.length) : (currentIndex - 1 + songs.length) % songs.length; loadSong(currentIndex); if (isPlaying) audio.play(); });
+nextBtn.addEventListener('click', () => { if (songs.length === 0) return; currentIndex = isShuffle ? Math.floor(Math.random() * songs.length) : (currentIndex + 1) % songs.length; loadSong(currentIndex); if (isPlaying) audio.play(); });
 back10Btn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
 forward10Btn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); });
+shuffleBtn.addEventListener('click', () => { isShuffle = !isShuffle; shuffleBtn.classList.toggle('active', isShuffle); });
+repeatBtn.addEventListener('click', () => { isRepeat = !isRepeat; repeatBtn.classList.toggle('active', isRepeat); audio.loop = isRepeat; });
 
-shuffleBtn.addEventListener('click', () => {
-  isShuffle = !isShuffle;
-  shuffleBtn.classList.toggle('active', isShuffle);
-});
-
-repeatBtn.addEventListener('click', () => {
-  isRepeat = !isRepeat;
-  repeatBtn.classList.toggle('active', isRepeat);
-  audio.loop = isRepeat;
-});
-
-audio.addEventListener('timeupdate', () => {
-  if (audio.duration) {
-    progressBar.value = (audio.currentTime / audio.duration) * 100;
-    currentTimeEl.textContent = formatTime(audio.currentTime);
-  }
-});
-audio.addEventListener('loadedmetadata', () => {
-  durationEl.textContent = formatTime(audio.duration);
-});
-audio.addEventListener('ended', () => {
-  if (!isRepeat) nextBtn.click();
-});
-progressBar.addEventListener('input', () => {
-  audio.currentTime = (progressBar.value / 100) * audio.duration;
-});
+audio.addEventListener('timeupdate', () => { if (audio.duration) { progressBar.value = (audio.currentTime / audio.duration) * 100; currentTimeEl.textContent = formatTime(audio.currentTime); } });
+audio.addEventListener('loadedmetadata', () => { durationEl.textContent = formatTime(audio.duration); });
+audio.addEventListener('ended', () => { if (!isRepeat) nextBtn.click(); });
+progressBar.addEventListener('input', () => { audio.currentTime = (progressBar.value / 100) * audio.duration; });
 
 document.getElementById('uploadSongs').addEventListener('change', (e) => {
   const files = Array.from(e.target.files);
@@ -268,11 +182,7 @@ document.getElementById('uploadSongs').addEventListener('change', (e) => {
     reader.onload = (ev) => {
       songs.push({ name: file.name.replace(/\.[^/.]+$/, ''), data: ev.target.result });
       loaded++;
-      if (loaded === files.length) {
-        localStorage.setItem('songs', JSON.stringify(songs));
-        renderPlaylist();
-        loadSong(songs.length - files.length);
-      }
+      if (loaded === files.length) { localStorage.setItem('songs', JSON.stringify(songs)); renderPlaylist(); loadSong(songs.length - files.length); }
     };
     reader.readAsDataURL(file);
   });
@@ -283,105 +193,53 @@ songList.addEventListener('click', (e) => {
   const info = e.target.closest('.song-info');
   const del = e.target.closest('.delete-btn');
   const fav = e.target.closest('.fav-toggle');
-  if (info) {
-    loadSong(parseInt(info.dataset.index));
-    audio.play(); isPlaying = true;
-    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    discIcon.classList.add('spinning');
-  } else if (del) {
+  if (info) { loadSong(parseInt(info.dataset.index)); audio.play(); isPlaying = true; playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; discIcon.classList.add('spinning'); } 
+  else if (del) {
     const idx = parseInt(del.dataset.index);
     if (confirm('Delete this song?')) {
-      songs.splice(idx, 1);
-      localStorage.setItem('songs', JSON.stringify(songs));
+      songs.splice(idx, 1); localStorage.setItem('songs', JSON.stringify(songs));
       if (currentIndex >= songs.length) currentIndex = 0;
-      if (songs.length > 0) loadSong(currentIndex);
-      else { audio.src = ''; songTitle.textContent = 'No song playing'; }
+      if (songs.length > 0) loadSong(currentIndex); else { audio.src = ''; songTitle.textContent = 'No song playing'; }
       renderPlaylist();
     }
-  } else if (fav) {
-    const idx = parseInt(fav.dataset.index);
-    toggleFavorite(songs[idx]);
-  }
+  } else if (fav) toggleFavorite(songs[parseInt(fav.dataset.index)]);
 });
 
 document.getElementById('favList').addEventListener('click', (e) => {
   const info = e.target.closest('.song-info');
   const del = e.target.closest('.delete-fav');
-  if (info) {
-    const name = info.dataset.name;
-    const idx = songs.findIndex(s => s.name === name);
-    if (idx >= 0) {
-      loadSong(idx);
-      audio.play(); isPlaying = true;
-      playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-      discIcon.classList.add('spinning');
-    }
-  } else if (del) {
-    const name = del.dataset.name;
-    favSongs = favSongs.filter(f => f.name !== name);
-    localStorage.setItem('favSongs', JSON.stringify(favSongs));
-    renderFavList();
-    updateFavBtn();
-    renderPlaylist();
-  }
+  if (info) { const idx = songs.findIndex(s => s.name === info.dataset.name); if (idx >= 0) { loadSong(idx); audio.play(); isPlaying = true; playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>'; discIcon.classList.add('spinning'); } } 
+  else if (del) { favSongs = favSongs.filter(f => f.name !== del.dataset.name); localStorage.setItem('favSongs', JSON.stringify(favSongs)); renderFavList(); updateFavBtn(); renderPlaylist(); }
 });
 
 function toggleFavorite(song) {
   const idx = favSongs.findIndex(f => f.name === song.name);
-  if (idx >= 0) {
-    favSongs.splice(idx, 1);
-  } else {
-    favSongs.push({ name: song.name, data: song.data });
-  }
-  localStorage.setItem('favSongs', JSON.stringify(favSongs));
-  renderPlaylist();
-  renderFavList();
-  updateFavBtn();
+  if (idx >= 0) favSongs.splice(idx, 1); else favSongs.push({ name: song.name, data: song.data });
+  localStorage.setItem('favSongs', JSON.stringify(favSongs)); renderPlaylist(); renderFavList(); updateFavBtn();
 }
 
-document.getElementById('favCurrentBtn').addEventListener('click', () => {
-  if (songs.length === 0) return;
-  toggleFavorite(songs[currentIndex]);
-});
+document.getElementById('favCurrentBtn').addEventListener('click', () => { if (songs.length > 0) toggleFavorite(songs[currentIndex]); });
 
-// Favorites panel
 const favPanel = document.getElementById('favPanel');
-document.getElementById('favBtn').addEventListener('click', () => {
-  favPanel.classList.toggle('hidden');
-  renderFavList();
-});
-document.getElementById('closeFav').addEventListener('click', () => {
-  favPanel.classList.add('hidden');
-});
+document.getElementById('favBtn').addEventListener('click', () => { favPanel.classList.toggle('hidden'); renderFavList(); });
+document.getElementById('closeFav').addEventListener('click', () => favPanel.classList.add('hidden'));
 
-// Sleep Timer
 const sleepTimer = document.getElementById('sleepTimer');
-document.getElementById('sleepTimerBtn').addEventListener('click', () => {
-  sleepTimer.classList.toggle('hidden');
-});
+document.getElementById('sleepTimerBtn').addEventListener('click', () => sleepTimer.classList.toggle('hidden'));
 document.querySelectorAll('.timer-options button').forEach(btn => {
   btn.addEventListener('click', () => {
     const min = parseInt(btn.dataset.min);
     if (sleepTimerId) { clearTimeout(sleepTimerId); sleepTimerId = null; }
-    if (min === 0) {
-      document.getElementById('sleepStatus').textContent = 'Timer off';
-      sleepEndTime = null;
-    } else {
+    if (min === 0) { document.getElementById('sleepStatus').textContent = 'Timer off'; sleepEndTime = null; } 
+    else {
       sleepEndTime = Date.now() + min * 60000;
-      sleepTimerId = setTimeout(() => {
-        audio.pause();
-        isPlaying = false;
-        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-        discIcon.classList.remove('spinning');
-        document.getElementById('sleepStatus').textContent = 'Stopped!';
-      }, min * 60000);
+      sleepTimerId = setTimeout(() => { audio.pause(); isPlaying = false; playBtn.innerHTML = '<i class="fa-solid fa-play"></i>'; discIcon.classList.remove('spinning'); document.getElementById('sleepStatus').textContent = 'Stopped!'; }, min * 60000);
       document.getElementById('sleepStatus').textContent = `Stops in ${min} minutes`;
     }
     sleepTimer.classList.add('hidden');
   });
 });
 
-// Background play
 document.getElementById('bgPlayBtn').addEventListener('click', () => {
   const enabled = localStorage.getItem('bgMusic') === 'true';
   localStorage.setItem('bgMusic', !enabled);
@@ -389,42 +247,19 @@ document.getElementById('bgPlayBtn').addEventListener('click', () => {
   alert(!enabled ? 'Background play enabled! 🎵' : 'Background play disabled');
 });
 
-// Update sleep timer display
-setInterval(() => {
-  if (sleepEndTime) {
-    const left = Math.max(0, Math.floor((sleepEndTime - Date.now()) / 60000));
-    document.getElementById('sleepStatus').textContent = `Stops in ${left} minutes`;
-  }
-}, 30000);
+setInterval(() => { if (sleepEndTime) document.getElementById('sleepStatus').textContent = `Stops in ${Math.max(0, Math.floor((sleepEndTime - Date.now()) / 60000))} minutes`; }, 30000);
 
-// Media Session API for background playback
 if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('play', () => audio.play());
   navigator.mediaSession.setActionHandler('pause', () => audio.pause());
   navigator.mediaSession.setActionHandler('previoustrack', () => prevBtn.click());
   navigator.mediaSession.setActionHandler('nexttrack', () => nextBtn.click());
 }
+audio.addEventListener('play', () => { if ('mediaSession' in navigator && songs[currentIndex]) navigator.mediaSession.metadata = new MediaMetadata({ title: songs[currentIndex].name, artist: 'Our Music', album: 'Couple App' }); });
 
-audio.addEventListener('play', () => {
-  if ('mediaSession' in navigator && songs[currentIndex]) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: songs[currentIndex].name,
-      artist: 'Our Music',
-      album: 'Couple App'
-    });
-  }
-});
+function formatTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60); return `${m}:${sec < 10 ? '0' : ''}${sec}`; }
 
-function formatTime(s) {
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return `${m}:${sec < 10 ? '0' : ''}${sec}`;
-}
-
-// Init
-if (localStorage.getItem('bgMusic') === 'true') {
-  document.getElementById('bgPlayBtn').classList.add('active');
-}
+if (localStorage.getItem('bgMusic') === 'true') document.getElementById('bgPlayBtn').classList.add('active');
 renderPlaylist();
 </script>
 </body>

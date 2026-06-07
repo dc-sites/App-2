@@ -52,10 +52,72 @@
     100% { transform: rotate(360deg); }
   }
   
+  /* WhatsApp-style Typing Indicator */
+  .typing-indicator {
+    position: absolute;
+    bottom: 80px;
+    left: 10px;
+    background: #ffffff;
+    padding: 10px 15px;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    max-width: 200px;
+    transition: all 0.3s ease;
+  }
+  
+  .typing-indicator.hidden {
+    display: none;
+  }
+  
+  .typing-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #667781;
+    margin-right: 5px;
+  }
+  
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  
+  .typing-dots span {
+    width: 8px;
+    height: 8px;
+    background: #90949c;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+  
+  .typing-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  
+  .typing-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+  
+  @keyframes bounce {
+    0%, 80%, 100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
   /* Ensure chat container is hidden until loaded */
   .chat-container {
     opacity: 0;
     transition: opacity 0.3s ease;
+    position: relative;
   }
   
   .chat-container.loaded {
@@ -73,7 +135,7 @@
 
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
+  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>OurChat</span></div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
@@ -117,17 +179,16 @@
   <button id="closeTheme" class="btn-secondary">Close</button>
 </div>
 
-<div id="typingIndicator" class="typing-indicator hidden">
-  <span class="typing-name"></span> is typing
-  <div class="typing-dots"><span></span><span></span><span></span></div>
-</div>
-
 <main class="chat-container" id="chatContainer">
   <div id="pinnedMessages" class="pinned-messages hidden">
     <div class="pinned-header"><i class="fa-solid fa-thumbtack"></i><span>Pinned Messages</span><button id="closePinned" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button></div>
     <div id="pinnedList"></div>
   </div>
   <div id="messages" class="messages"></div>
+  <div id="typingIndicator" class="typing-indicator hidden">
+    <span class="typing-name"></span>
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+  </div>
 </main>
 
 <div id="replyPreview" class="reply-preview hidden">
@@ -241,10 +302,17 @@ onValue(ref(rtdb, 'typing'), (snapshot) => {
   const typingIndicator = document.getElementById('typingIndicator');
   let isTyping = false, typingUser = '';
   Object.keys(data).forEach(user => {
-    if (user !== userName && data[user].typing && Date.now() - data[user].timestamp < 3000) { isTyping = true; typingUser = user; }
+    if (user !== userName && data[user].typing && Date.now() - data[user].timestamp < 3000) { 
+      isTyping = true; 
+      typingUser = user; 
+    }
   });
-  if (isTyping) { typingIndicator.querySelector('.typing-name').textContent = typingUser; typingIndicator.classList.remove('hidden'); } 
-  else typingIndicator.classList.add('hidden');
+  if (isTyping) { 
+    typingIndicator.querySelector('.typing-name').textContent = typingUser; 
+    typingIndicator.classList.remove('hidden'); 
+  } else {
+    typingIndicator.classList.add('hidden');
+  }
 });
 
 const searchBar = document.getElementById('searchBar');
@@ -367,17 +435,22 @@ onSnapshot(q, async (snapshot) => {
   renderMessages(allMessages);
   renderPinned();
   
-  // Hide loading animation on first load
+  // Hide loading animation on first load and scroll to bottom
   if (isFirstLoad) {
     document.getElementById('loadingOverlay').classList.add('hidden');
     document.getElementById('chatContainer').classList.add('loaded');
     isFirstLoad = false;
+    
+    // Wait for container to be visible, then scroll to bottom
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 300);
+  } else {
+    // Scroll to bottom on new messages
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 100);
   }
-  
-  // Scroll to last message (bottom)
-  setTimeout(() => {
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }, 100);
 });
 
 function renderMessages(msgs) {

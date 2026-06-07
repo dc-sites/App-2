@@ -8,42 +8,107 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#87CEEB">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
 </head>
 <body class="entry-body">
-<div class="entry-container">
+
+<div class="entry-container" id="entryForm">
   <div class="entry-card">
     <div class="logo-circle"><i class="fa-solid fa-heart"></i></div>
     <h1 class="entry-title">Welcome, My Love</h1>
-    <p class="entry-subtitle">Enter your name to continue</p>
+    <p class="entry-subtitle">Enter your name to request access</p>
     <div class="input-group">
       <i class="fa-solid fa-user input-icon"></i>
       <input type="text" id="nameInput" placeholder="Your beautiful name" maxlength="20" autocomplete="off">
     </div>
     <button id="enterBtn" class="btn-primary">
-      <i class="fa-solid fa-arrow-right-to-bracket"></i> Enter Our World
+      <i class="fa-solid fa-paper-plane"></i> Request Access
     </button>
-    <p class="hint-text"><i class="fa-solid fa-circle-info"></i> Name cannot be changed later</p>
+    <p class="hint-text"><i class="fa-solid fa-circle-info"></i> Admin approval required</p>
+    <p style="margin-top:15px;"><a href="admin.html" style="color:var(--primary-dark);font-size:13px;text-decoration:none;"><i class="fa-solid fa-shield-halved"></i> Admin Login</a></p>
   </div>
 </div>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const savedName = localStorage.getItem('userName');
-  if (savedName) { window.location.href = 'dashboard.html'; return; }
-  const nameInput = document.getElementById('nameInput');
-  const enterBtn = document.getElementById('enterBtn');
-  const go = () => {
-    const name = nameInput.value.trim();
-    if (name.length < 2) {
-      nameInput.classList.add('shake');
-      setTimeout(() => nameInput.classList.remove('shake'), 500);
-      return;
+
+<div class="entry-container hidden" id="waitingScreen">
+  <div class="entry-card">
+    <div class="logo-circle" style="animation: pulse 1.5s infinite;"><i class="fa-solid fa-hourglass-half"></i></div>
+    <h1 class="entry-title">Waiting for Approval</h1>
+    <p class="entry-subtitle">Please wait while the admin approves your access...</p>
+    <p id="waitingStatus" class="hint-text" style="font-size:16px;font-weight:600;color:var(--primary-dark);">Status: Pending</p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKKUQUAcRyMeugjQRJ06TfdN2qfLgpRMA",
+  authDomain: "chatweb-3ecb0.firebaseapp.com",
+  projectId: "chatweb-3ecb0",
+  storageBucket: "chatweb-3ecb0.firebasestorage.app",
+  messagingSenderId: "348010514098",
+  appId: "1:348010514098:web:93023cd4faf9d443232bab",
+  measurementId: "G-ZQY3V6PR2K"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const savedName = localStorage.getItem('userName');
+if (savedName) {
+  const userRef = doc(db, 'users', savedName);
+  getDoc(userRef).then((snap) => {
+    if (snap.exists() && snap.data().status === 'approved') {
+      window.location.href = 'dashboard.html';
+    } else {
+      localStorage.removeItem('userName');
+      document.getElementById('entryForm').classList.remove('hidden');
     }
-    localStorage.setItem('userName', name);
-    window.location.href = 'dashboard.html';
-  };
-  enterBtn.addEventListener('click', go);
-  nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') go(); });
-});
+  });
+} else {
+  document.getElementById('entryForm').classList.remove('hidden');
+}
+
+const nameInput = document.getElementById('nameInput');
+const enterBtn = document.getElementById('enterBtn');
+
+const requestAccess = async () => {
+  const name = nameInput.value.trim();
+  if (name.length < 2) {
+    nameInput.classList.add('shake');
+    setTimeout(() => nameInput.classList.remove('shake'), 500);
+    return;
+  }
+  
+  document.getElementById('entryForm').classList.add('hidden');
+  document.getElementById('waitingScreen').classList.remove('hidden');
+  
+  const userRef = doc(db, 'users', name);
+  await setDoc(userRef, {
+    name: name,
+    status: 'pending',
+    timestamp: serverTimestamp()
+  }, { merge: true });
+  
+  onSnapshot(userRef, (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      document.getElementById('waitingStatus').textContent = `Status: ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}`;
+      if (data.status === 'approved') {
+        localStorage.setItem('userName', name);
+        window.location.href = 'dashboard.html';
+      } else if (data.status === 'deleted') {
+        alert('Access denied by admin.');
+        localStorage.removeItem('userName');
+        window.location.reload();
+      }
+    }
+  });
+};
+
+enterBtn.addEventListener('click', requestAccess);
+nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') requestAccess(); });
 </script>
 </body>
 </html>

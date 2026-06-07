@@ -8,38 +8,30 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#87CEEB">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
 </head>
 <body class="chat-body" data-theme="lightblue">
 
-<!-- Top Bar -->
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-  <div class="topbar-title">
-    <i class="fa-solid fa-heart"></i>
-    <span>Our Chat</span>
-  </div>
+  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
   </div>
 </header>
 
-<!-- Search Bar -->
 <div id="searchBar" class="search-bar hidden">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="text" id="searchInput" placeholder="Search messages...">
   <button id="closeSearch" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button>
 </div>
 
-<!-- Side Menu -->
 <aside id="sideMenu" class="side-menu">
   <div class="profile-section">
     <div class="profile-pic" id="profilePic"><i class="fa-solid fa-user"></i></div>
     <h3 id="userName">User</h3>
-    <label class="upload-btn">
-      <i class="fa-solid fa-camera"></i> Change Photo
-      <input type="file" id="profileUpload" accept="image/*" hidden>
-    </label>
+    <label class="upload-btn"><i class="fa-solid fa-camera"></i> Change Photo<input type="file" id="profileUpload" accept="image/*" hidden></label>
   </div>
   <nav class="menu-nav">
     <a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a>
@@ -53,7 +45,6 @@
 </aside>
 <div id="overlay" class="overlay"></div>
 
-<!-- Theme Picker -->
 <div id="themePicker" class="theme-picker">
   <h3><i class="fa-solid fa-palette"></i> Choose Theme</h3>
   <div class="theme-grid">
@@ -67,94 +58,63 @@
   <button id="closeTheme" class="btn-secondary">Close</button>
 </div>
 
-<!-- Typing Indicator -->
 <div id="typingIndicator" class="typing-indicator hidden">
   <span class="typing-name"></span> is typing
-  <div class="typing-dots">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="typing-dots"><span></span><span></span><span></span></div>
 </div>
 
-<!-- Last Seen -->
-<div id="lastSeen" class="last-seen">
-  <i class="fa-solid fa-circle" style="color:#4CAF50;font-size:8px"></i>
-  <span id="lastSeenText">Online</span>
-</div>
-
-<!-- Chat Messages -->
 <main class="chat-container">
   <div id="pinnedMessages" class="pinned-messages hidden">
-    <div class="pinned-header">
-      <i class="fa-solid fa-thumbtack"></i>
-      <span>Pinned Messages</span>
-      <button id="closePinned" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button>
-    </div>
+    <div class="pinned-header"><i class="fa-solid fa-thumbtack"></i><span>Pinned Messages</span><button id="closePinned" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button></div>
     <div id="pinnedList"></div>
   </div>
   <div id="messages" class="messages"></div>
 </main>
 
-<!-- Reply Preview -->
 <div id="replyPreview" class="reply-preview hidden">
-  <div class="reply-content">
-    <i class="fa-solid fa-reply"></i>
-    <div>
-      <div class="reply-name" id="replyName"></div>
-      <div class="reply-text" id="replyText"></div>
-    </div>
-  </div>
+  <div class="reply-content"><i class="fa-solid fa-reply"></i><div><div class="reply-name" id="replyName"></div><div class="reply-text" id="replyText"></div></div></div>
   <button id="cancelReply" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button>
 </div>
 
-<!-- Message Input -->
 <footer class="chat-input">
   <button id="attachBtn" class="icon-btn"><i class="fa-solid fa-plus"></i></button>
   <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
   <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
-  <button id="voiceBtn" class="icon-btn"><i class="fa-solid fa-microphone"></i></button>
-  <button id="sendBtn" class="icon-btn send hidden"><i class="fa-solid fa-paper-plane"></i></button>
+  <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
 </footer>
 
-<!-- Attachment Menu -->
 <div id="attachMenu" class="attach-menu hidden">
   <button id="imageBtn"><i class="fa-solid fa-image" style="color:#4CAF50"></i><span>Photo</span></button>
   <button id="locationBtn"><i class="fa-solid fa-location-dot" style="color:#F44336"></i><span>Location</span></button>
+  <button id="voiceRecordBtn"><i class="fa-solid fa-microphone" style="color:#9C27B0"></i><span>Voice</span></button>
   <input type="file" id="imageUpload" accept="image/*" hidden>
 </div>
 
-<!-- Emoji Picker -->
 <div id="emojiPicker" class="emoji-picker">
   <div class="emoji-grid">
-    <span>❤️</span><span>😍</span><span>😘</span><span>🥰</span><span>💕</span>
-    <span>💖</span><span>💗</span><span>💘</span><span>💝</span><span>💞</span>
-    <span>😂</span><span>🤣</span><span>😊</span><span>😎</span><span>🤗</span>
-    <span>🥺</span><span>😭</span><span>😅</span><span>🤭</span><span>🙈</span>
-    <span>👍</span><span>👎</span><span>👏</span><span>🙌</span><span>🤝</span>
-    <span>🔥</span><span>⭐</span><span>✨</span><span>🌹</span><span>🌸</span>
+    <span>❤️</span><span>😍</span><span>😘</span><span>🥰</span><span>💕</span><span>💖</span>
+    <span>💗</span><span>💘</span><span>💝</span><span>💞</span><span>😂</span><span>🤣</span>
+    <span>😊</span><span>😎</span><span>🤗</span><span>🥺</span><span>😭</span><span>😅</span>
+    <span>🤭</span><span>🙈</span><span>👍</span><span>👎</span><span>👏</span><span>🙌</span>
   </div>
 </div>
 
-<!-- Reaction Picker -->
 <div id="reactionPicker" class="reaction-picker">
-  <span data-reaction="❤️">❤️</span>
-  <span data-reaction="😍">😍</span>
-  <span data-reaction="😂">😂</span>
-  <span data-reaction="😮">😮</span>
-  <span data-reaction="😢">😢</span>
-  <span data-reaction="👍">👍</span>
+  <span data-reaction="❤️">❤️</span><span data-reaction="😍">😍</span><span data-reaction="😂">😂</span>
+  <span data-reaction="😮">😮</span><span data-reaction="😢">😢</span><span data-reaction="👍">👍</span>
 </div>
 
-<!-- Message Options -->
 <div id="msgOptions" class="msg-options hidden">
   <button data-action="reply"><i class="fa-solid fa-reply"></i> Reply</button>
-  <button data-action="pin"><i class="fa-solid fa-thumbtack"></i> Pin</button>
   <button data-action="copy"><i class="fa-solid fa-copy"></i> Copy</button>
+  <button data-action="edit" id="editMsgBtn" class="hidden"><i class="fa-solid fa-pen"></i> Edit</button>
+  <button data-action="delete" id="deleteMsgBtn" class="hidden"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKKUQUAcRyMeugjQRJ06TfdN2qfLgpRMA",
@@ -173,238 +133,120 @@ const rtdb = getDatabase(app);
 
 const userName = localStorage.getItem('userName');
 if (!userName) { window.location.href = 'index.html'; }
-
 document.getElementById('userName').textContent = userName;
 
-// Profile pic
 const profilePic = localStorage.getItem('profilePic_' + userName);
-if (profilePic) {
-  document.getElementById('profilePic').innerHTML = `<img src="${profilePic}" alt="profile">`;
-}
+if (profilePic) document.getElementById('profilePic').innerHTML = `<img src="${profilePic}" alt="profile">`;
 document.getElementById('profileUpload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    localStorage.setItem('profilePic_' + userName, ev.target.result);
-    document.getElementById('profilePic').innerHTML = `<img src="${ev.target.result}" alt="profile">`;
-  };
+  reader.onload = (ev) => { localStorage.setItem('profilePic_' + userName, ev.target.result); document.getElementById('profilePic').innerHTML = `<img src="${ev.target.result}" alt="profile">`; };
   reader.readAsDataURL(file);
 });
 
-// Theme
 const savedTheme = localStorage.getItem('theme') || 'lightblue';
 document.body.setAttribute('data-theme', savedTheme);
-document.getElementById('themeBtn').addEventListener('click', () => {
-  document.getElementById('themePicker').classList.add('active');
-});
-document.getElementById('closeTheme').addEventListener('click', () => {
-  document.getElementById('themePicker').classList.remove('active');
-});
+document.getElementById('themeBtn').addEventListener('click', () => document.getElementById('themePicker').classList.add('active'));
+document.getElementById('closeTheme').addEventListener('click', () => document.getElementById('themePicker').classList.remove('active'));
 document.querySelectorAll('.theme-option').forEach(opt => {
   opt.addEventListener('click', () => {
+    document.documentElement.setAttribute('data-theme', opt.dataset.theme);
     document.body.setAttribute('data-theme', opt.dataset.theme);
     localStorage.setItem('theme', opt.dataset.theme);
   });
 });
 
-// Side menu
 const sideMenu = document.getElementById('sideMenu');
 const overlay = document.getElementById('overlay');
-document.getElementById('menuBtn').addEventListener('click', () => {
-  sideMenu.classList.add('open'); overlay.classList.add('active');
-});
-overlay.addEventListener('click', () => {
-  sideMenu.classList.remove('open'); overlay.classList.remove('active');
-  closeAllPopups();
-});
+document.getElementById('menuBtn').addEventListener('click', () => { sideMenu.classList.add('open'); overlay.classList.add('active'); });
+overlay.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.classList.remove('active'); closeAllPopups(); });
+document.getElementById('logoutBtn').addEventListener('click', () => { if (confirm('Are you sure?')) { localStorage.removeItem('userName'); window.location.href = 'index.html'; } });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  if (confirm('Are you sure?')) {
-    localStorage.removeItem('userName');
-    window.location.href = 'index.html';
-  }
-});
-
-// Online/Last Seen
 const presenceRef = ref(rtdb, 'presence/' + userName);
 const lastSeenRef = ref(rtdb, 'lastSeen/' + userName);
 set(presenceRef, { online: true, timestamp: Date.now() });
-window.addEventListener('beforeunload', () => {
-  set(presenceRef, { online: false, timestamp: Date.now() });
-  set(lastSeenRef, { timestamp: Date.now() });
-});
-setInterval(() => {
-  set(presenceRef, { online: true, timestamp: Date.now() });
-}, 30000);
+window.addEventListener('beforeunload', () => { set(presenceRef, { online: false, timestamp: Date.now() }); set(lastSeenRef, { timestamp: Date.now() }); });
+setInterval(() => set(presenceRef, { online: true, timestamp: Date.now() }), 30000);
 
-// Typing indicator
 const typingRef = ref(rtdb, 'typing/' + userName);
 const messageInput = document.getElementById('messageInput');
 let typingTimeout;
 messageInput.addEventListener('input', () => {
   set(typingRef, { typing: true, timestamp: Date.now() });
   clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {
-    set(typingRef, { typing: false, timestamp: Date.now() });
-  }, 2000);
+  typingTimeout = setTimeout(() => set(typingRef, { typing: false, timestamp: Date.now() }), 2000);
 });
 
-// Listen for other user typing
-const otherTypingRef = ref(rtdb, 'typing');
-onValue(otherTypingRef, (snapshot) => {
+onValue(ref(rtdb, 'typing'), (snapshot) => {
   const data = snapshot.val() || {};
   const typingIndicator = document.getElementById('typingIndicator');
-  let isTyping = false;
-  let typingUser = '';
+  let isTyping = false, typingUser = '';
   Object.keys(data).forEach(user => {
-    if (user !== userName && data[user].typing) {
-      if (Date.now() - data[user].timestamp < 3000) {
-        isTyping = true;
-        typingUser = user;
-      }
-    }
+    if (user !== userName && data[user].typing && Date.now() - data[user].timestamp < 3000) { isTyping = true; typingUser = user; }
   });
-  if (isTyping) {
-    typingIndicator.querySelector('.typing-name').textContent = typingUser;
-    typingIndicator.classList.remove('hidden');
-  } else {
-    typingIndicator.classList.add('hidden');
-  }
+  if (isTyping) { typingIndicator.querySelector('.typing-name').textContent = typingUser; typingIndicator.classList.remove('hidden'); } 
+  else typingIndicator.classList.add('hidden');
 });
 
-// Last seen display
-const allLastSeenRef = ref(rtdb, 'lastSeen');
-onValue(allLastSeenRef, (snapshot) => {
+onValue(ref(rtdb, 'lastSeen'), (snapshot) => {
   const data = snapshot.val() || {};
   const lastSeenText = document.getElementById('lastSeenText');
   let latest = null;
-  Object.keys(data).forEach(user => {
-    if (user !== userName) {
-      if (!latest || data[user].timestamp > latest.timestamp) {
-        latest = { user, ...data[user] };
-      }
-    }
-  });
+  Object.keys(data).forEach(user => { if (user !== userName && (!latest || data[user].timestamp > latest.timestamp)) latest = { user, ...data[user] }; });
   if (latest) {
     const diff = Date.now() - latest.timestamp;
-    if (diff < 60000) lastSeenText.textContent = 'Online';
-    else if (diff < 3600000) lastSeenText.textContent = `${Math.floor(diff/60000)}m ago`;
-    else lastSeenText.textContent = new Date(latest.timestamp).toLocaleString();
+    lastSeenText.textContent = diff < 60000 ? 'Online' : diff < 3600000 ? `${Math.floor(diff/60000)}m ago` : new Date(latest.timestamp).toLocaleString();
   }
 });
 
-// Search
 const searchBar = document.getElementById('searchBar');
-document.getElementById('searchBtn').addEventListener('click', () => {
-  searchBar.classList.toggle('hidden');
-  if (!searchBar.classList.contains('hidden')) {
-    document.getElementById('searchInput').focus();
-  }
-});
-document.getElementById('closeSearch').addEventListener('click', () => {
-  searchBar.classList.add('hidden');
-  document.getElementById('searchInput').value = '';
-  renderMessages(allMessages);
-});
+document.getElementById('searchBtn').addEventListener('click', () => { searchBar.classList.toggle('hidden'); if (!searchBar.classList.contains('hidden')) document.getElementById('searchInput').focus(); });
+document.getElementById('closeSearch').addEventListener('click', () => { searchBar.classList.add('hidden'); document.getElementById('searchInput').value = ''; renderMessages(allMessages); });
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
-  if (!term) { renderMessages(allMessages); return; }
-  const filtered = allMessages.filter(m => m.data.text && m.data.text.toLowerCase().includes(term));
-  renderMessages(filtered);
+  renderMessages(term ? allMessages.filter(m => m.data.text && m.data.text.toLowerCase().includes(term)) : allMessages);
 });
 
-// Emoji picker
 const emojiPicker = document.getElementById('emojiPicker');
-document.getElementById('emojiBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  emojiPicker.classList.toggle('active');
-});
-document.querySelectorAll('.emoji-grid span').forEach(em => {
-  em.addEventListener('click', () => {
-    messageInput.value += em.textContent;
-    emojiPicker.classList.remove('active');
-  });
-});
+document.getElementById('emojiBtn').addEventListener('click', (e) => { e.stopPropagation(); emojiPicker.classList.toggle('active'); });
+document.querySelectorAll('.emoji-grid span').forEach(em => em.addEventListener('click', () => { messageInput.value += em.textContent; emojiPicker.classList.remove('active'); }));
 
-// Attachment menu
 const attachMenu = document.getElementById('attachMenu');
-document.getElementById('attachBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  attachMenu.classList.toggle('hidden');
-});
+document.getElementById('attachBtn').addEventListener('click', (e) => { e.stopPropagation(); attachMenu.classList.toggle('hidden'); });
 document.addEventListener('click', (e) => {
-  if (!attachMenu.contains(e.target) && e.target.id !== 'attachBtn') {
-    attachMenu.classList.add('hidden');
-  }
-  if (!emojiPicker.contains(e.target) && e.target.id !== 'emojiBtn') {
-    emojiPicker.classList.remove('active');
-  }
+  if (!attachMenu.contains(e.target) && e.target.id !== 'attachBtn') attachMenu.classList.add('hidden');
+  if (!emojiPicker.contains(e.target) && e.target.id !== 'emojiBtn') emojiPicker.classList.remove('active');
 });
 
-// Image upload
-document.getElementById('imageBtn').addEventListener('click', () => {
-  document.getElementById('imageUpload').click();
-});
+document.getElementById('imageBtn').addEventListener('click', () => document.getElementById('imageUpload').click());
 document.getElementById('imageUpload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async (ev) => {
-    // Compress image
     const img = new Image();
     img.onload = async () => {
       const canvas = document.createElement('canvas');
-      const maxSize = 800;
       let w = img.width, h = img.height;
-      if (w > maxSize || h > maxSize) {
-        if (w > h) { h = (h * maxSize) / w; w = maxSize; }
-        else { w = (w * maxSize) / h; h = maxSize; }
-      }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const compressed = canvas.toDataURL('image/jpeg', 0.7);
-      await sendMessage({ type: 'image', image: compressed, text: '' });
+      if (w > 800 || h > 800) { if (w > h) { h = (h * 800) / w; w = 800; } else { w = (w * 800) / h; h = 800; } }
+      canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      await sendMessage({ type: 'image', image: canvas.toDataURL('image/jpeg', 0.7), text: '' });
     };
     img.src = ev.target.result;
   };
-  reader.readAsDataURL(file);
-  e.target.value = '';
+  reader.readAsDataURL(file); e.target.value = '';
 });
 
-// Location
 document.getElementById('locationBtn').addEventListener('click', () => {
-  if (!navigator.geolocation) {
-    alert('Geolocation not supported');
-    return;
-  }
+  if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
   navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-    await sendMessage({ type: 'location', lat, lng, text: '' });
+    await sendMessage({ type: 'location', lat: pos.coords.latitude, lng: pos.coords.longitude, text: '' });
     attachMenu.classList.add('hidden');
-  }, (err) => {
-    alert('Could not get location: ' + err.message);
-  });
+  }, (err) => alert('Could not get location: ' + err.message));
 });
 
-// Voice recording
-let mediaRecorder;
-let audioChunks = [];
-const voiceBtn = document.getElementById('voiceBtn');
-const sendBtn = document.getElementById('sendBtn');
-
-messageInput.addEventListener('input', () => {
-  if (messageInput.value.trim()) {
-    sendBtn.classList.remove('hidden');
-    voiceBtn.classList.add('hidden');
-  } else {
-    sendBtn.classList.add('hidden');
-    voiceBtn.classList.remove('hidden');
-  }
-});
-
-voiceBtn.addEventListener('click', async () => {
+let mediaRecorder, audioChunks = [];
+document.getElementById('voiceRecordBtn').addEventListener('click', async () => {
+  attachMenu.classList.add('hidden');
   if (!mediaRecorder || mediaRecorder.state === 'inactive') {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -414,92 +256,62 @@ voiceBtn.addEventListener('click', async () => {
       mediaRecorder.onstop = async () => {
         const blob = new Blob(audioChunks, { type: 'audio/webm' });
         const reader = new FileReader();
-        reader.onload = async (ev) => {
-          await sendMessage({ type: 'voice', audio: ev.target.result, duration: Math.floor(audioChunks.length) });
-        };
-        reader.readAsDataURL(blob);
-        stream.getTracks().forEach(t => t.stop());
+        reader.onload = async (ev) => { await sendMessage({ type: 'voice', audio: ev.target.result }); };
+        reader.readAsDataURL(blob); stream.getTracks().forEach(t => t.stop());
       };
       mediaRecorder.start();
-      voiceBtn.innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i>';
-      voiceBtn.classList.add('recording');
-    } catch (err) {
-      alert('Microphone access denied');
-    }
+      document.getElementById('voiceRecordBtn').innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i><span>Stop</span>';
+      document.getElementById('voiceRecordBtn').classList.add('recording');
+    } catch (err) { alert('Microphone access denied'); }
   } else {
     mediaRecorder.stop();
-    voiceBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-    voiceBtn.classList.remove('recording');
+    document.getElementById('voiceRecordBtn').innerHTML = '<i class="fa-solid fa-microphone" style="color:#9C27B0"></i><span>Voice</span>';
+    document.getElementById('voiceRecordBtn').classList.remove('recording');
   }
 });
 
-// Send text message
+let currentReply = null;
+const replyPreview = document.getElementById('replyPreview');
+function setReply(msg) { currentReply = msg; document.getElementById('replyName').textContent = msg.data.sender; document.getElementById('replyText').textContent = msg.data.text || '[Attachment]'; replyPreview.classList.remove('hidden'); messageInput.focus(); }
+function cancelReply() { currentReply = null; replyPreview.classList.add('hidden'); }
+document.getElementById('cancelReply').addEventListener('click', cancelReply);
+
 const sendMessage = async (extra = {}) => {
   const text = messageInput.value.trim();
   if (!text && !extra.type) return;
   try {
-    const msgData = {
-      sender: userName,
-      text: text,
-      timestamp: serverTimestamp(),
-      reactions: {},
-      readBy: [userName],
-      pinned: false,
-      replyTo: currentReply ? currentReply.id : null,
-      replyText: currentReply ? currentReply.data.text : null,
-      replySender: currentReply ? currentReply.data.sender : null,
-      ...extra
-    };
-    await addDoc(collection(db, 'messages'), msgData);
-    messageInput.value = '';
-    cancelReply();
+    await addDoc(collection(db, 'messages'), {
+      sender: userName, text: text, timestamp: serverTimestamp(), reactions: {}, readBy: [userName], pinned: false,
+      replyTo: currentReply ? currentReply.id : null, replyText: currentReply ? currentReply.data.text : null, replySender: currentReply ? currentReply.data.sender : null, ...extra
+    });
+    messageInput.value = ''; cancelReply();
   } catch (err) { console.error(err); }
 };
 
-sendBtn.addEventListener('click', () => sendMessage());
+document.getElementById('sendBtn').addEventListener('click', () => sendMessage());
 messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-// Reply
-let currentReply = null;
-const replyPreview = document.getElementById('replyPreview');
-function setReply(msg) {
-  currentReply = msg;
-  document.getElementById('replyName').textContent = msg.data.sender;
-  document.getElementById('replyText').textContent = msg.data.text || '[Attachment]';
-  replyPreview.classList.remove('hidden');
-  messageInput.focus();
-}
-function cancelReply() {
-  currentReply = null;
-  replyPreview.classList.add('hidden');
-}
-document.getElementById('cancelReply').addEventListener('click', cancelReply);
-
-// Messages rendering
 const messagesDiv = document.getElementById('messages');
-let allMessages = [];
-let pinnedMessages = [];
+let allMessages = [], pinnedMessages = [];
 
 const q = query(collection(db, 'messages'), orderBy('timestamp', 'asc'));
 onSnapshot(q, async (snapshot) => {
   allMessages = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
-  
-  // Mark as read
-  const unread = allMessages.filter(m => 
-    m.data.sender !== userName && 
-    (!m.data.readBy || !m.data.readBy.includes(userName))
-  );
-  for (const m of unread) {
-    try {
-      await updateDoc(doc(db, 'messages', m.id), {
-        readBy: arrayUnion(userName)
-      });
-    } catch (e) {}
-  }
-  
+  const unread = allMessages.filter(m => m.data.sender !== userName && (!m.data.readBy || !m.data.readBy.includes(userName)));
+  for (const m of unread) { try { await updateDoc(doc(db, 'messages', m.id), { readBy: arrayUnion(userName) }); } catch (e) {} }
   pinnedMessages = allMessages.filter(m => m.data.pinned);
   renderMessages(allMessages);
   renderPinned();
+  
+  setTimeout(() => {
+    const unreadMsgEl = Array.from(messagesDiv.querySelectorAll('.message.received')).find(el => {
+      const id = el.querySelector('.message-bubble').dataset.id;
+      const msg = allMessages.find(m => m.id === id);
+      return msg && (!msg.data.readBy || !msg.data.readBy.includes(userName));
+    });
+    if (unreadMsgEl) unreadMsgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    else messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 150);
 });
 
 function renderMessages(msgs) {
@@ -512,41 +324,27 @@ function renderMessages(msgs) {
     if (data.pinned) msgEl.classList.add('pinned');
     
     let contentHtml = '';
-    if (data.type === 'image') {
+    if (data.deleted) {
+      contentHtml = `<em style="opacity:0.7">🚫 This message was deleted by ${escapeHtml(data.deletedBy)}</em>`;
+    } else if (data.type === 'image') {
       contentHtml = `<img src="${data.image}" class="msg-image" alt="image">`;
     } else if (data.type === 'voice') {
       contentHtml = `<div class="voice-msg"><button class="play-voice" data-src="${data.audio}"><i class="fa-solid fa-play"></i></button><span>Voice message</span></div>`;
     } else if (data.type === 'location') {
       contentHtml = `<a href="https://maps.google.com/?q=${data.lat},${data.lng}" target="_blank" class="location-msg"><i class="fa-solid fa-location-dot"></i> View Location</a>`;
     } else {
-      contentHtml = escapeHtml(data.text);
+      contentHtml = escapeHtml(data.text) + (data.edited ? ' <span style="font-size:10px;opacity:0.6">edited</span>' : '');
     }
     
     const reactions = data.reactions || {};
-    const reactionHtml = Object.keys(reactions).length ? 
-      `<div class="reactions">${Object.entries(reactions).map(([u,r]) => `<span title="${u}">${r}</span>`).join('')}</div>` : '';
-    
-    const replyHtml = data.replyTo ? `
-      <div class="reply-bubble">
-        <div class="reply-sender">${data.replySender}</div>
-        <div class="reply-text">${data.replyText || '[Attachment]'}</div>
-      </div>
-    ` : '';
-    
-    const readHtml = isMe ? `
-      <div class="read-receipt">
-        ${data.readBy && data.readBy.length > 1 ? 
-          '<i class="fa-solid fa-check-double" style="color:#4FC3F7"></i>' : 
-          '<i class="fa-solid fa-check"></i>'}
-      </div>
-    ` : '';
-    
+    const reactionHtml = Object.keys(reactions).length ? `<div class="reactions">${Object.entries(reactions).map(([u,r]) => `<span title="${u}">${r}</span>`).join('')}</div>` : '';
+    const replyHtml = data.replyTo ? `<div class="reply-bubble"><div class="reply-sender">${data.replySender}</div><div class="reply-text">${data.replyText || '[Attachment]'}</div></div>` : '';
+    const readHtml = isMe ? `<div class="read-receipt">${data.readBy && data.readBy.length > 1 ? '<i class="fa-solid fa-check-double" style="color:#4FC3F7"></i>' : '<i class="fa-solid fa-check"></i>'}</div>` : '';
     const pinIcon = data.pinned ? '<i class="fa-solid fa-thumbtack pin-icon"></i>' : '';
     
     msgEl.innerHTML = `
       <div class="message-bubble" data-id="${msg.id}">
-        ${pinIcon}
-        ${replyHtml}
+        ${pinIcon}${replyHtml}
         <div class="message-sender">${data.sender}</div>
         <div class="message-text">${contentHtml}</div>
         ${reactionHtml}
@@ -556,34 +354,23 @@ function renderMessages(msgs) {
     `;
     messagesDiv.appendChild(msgEl);
   });
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
 function renderPinned() {
   const pinnedDiv = document.getElementById('pinnedMessages');
   const pinnedList = document.getElementById('pinnedList');
-  if (pinnedMessages.length === 0) {
-    pinnedDiv.classList.add('hidden');
-    return;
-  }
+  if (pinnedMessages.length === 0) { pinnedDiv.classList.add('hidden'); return; }
   pinnedDiv.classList.remove('hidden');
   pinnedList.innerHTML = '';
   pinnedMessages.slice(0, 3).forEach(msg => {
     const div = document.createElement('div');
     div.className = 'pinned-item';
-    div.innerHTML = `
-      <div class="pinned-sender">${msg.data.sender}</div>
-      <div class="pinned-text">${msg.data.text || '[Attachment]'}</div>
-    `;
+    div.innerHTML = `<div class="pinned-sender">${msg.data.sender}</div><div class="pinned-text">${msg.data.text || '[Attachment]'}</div>`;
     pinnedList.appendChild(div);
   });
 }
+document.getElementById('closePinned').addEventListener('click', () => document.getElementById('pinnedMessages').classList.add('hidden'));
 
-document.getElementById('closePinned').addEventListener('click', () => {
-  document.getElementById('pinnedMessages').classList.add('hidden');
-});
-
-// Reactions
 const reactionPicker = document.getElementById('reactionPicker');
 let activeMsgId = null;
 document.addEventListener('click', (e) => {
@@ -594,26 +381,21 @@ document.addEventListener('click', (e) => {
     reactionPicker.style.top = (rect.top - 50) + 'px';
     reactionPicker.style.left = Math.max(10, rect.left - 100) + 'px';
     reactionPicker.classList.add('active');
-  } else if (!reactionPicker.contains(e.target)) {
-    reactionPicker.classList.remove('active');
-  }
+  } else if (!reactionPicker.contains(e.target)) reactionPicker.classList.remove('active');
 });
 document.querySelectorAll('#reactionPicker span').forEach(r => {
   r.addEventListener('click', async () => {
     if (!activeMsgId) return;
     const msgRef = doc(db, 'messages', activeMsgId);
-    const reactions = {};
-    reactions[userName] = r.dataset.reaction;
-    await updateDoc(msgRef, { reactions });
+    const updates = {};
+    updates['reactions.' + userName] = r.dataset.reaction;
+    await updateDoc(msgRef, updates);
     reactionPicker.classList.remove('active');
   });
 });
 
-// Message options (long press)
+let longPressTimer, selectedMsg = null, isMeSelected = false;
 const msgOptions = document.getElementById('msgOptions');
-let longPressTimer;
-let selectedMsg = null;
-
 messagesDiv.addEventListener('mousedown', startPress);
 messagesDiv.addEventListener('touchstart', startPress);
 messagesDiv.addEventListener('mouseup', endPress);
@@ -624,42 +406,37 @@ function startPress(e) {
   const bubble = e.target.closest('.message-bubble');
   if (!bubble) return;
   selectedMsg = allMessages.find(m => m.id === bubble.dataset.id);
+  isMeSelected = selectedMsg.data.sender === userName;
   longPressTimer = setTimeout(() => {
     const rect = bubble.getBoundingClientRect();
-    msgOptions.style.top = (rect.top + window.scrollY) + 'px';
-    msgOptions.style.left = (rect.left + window.scrollX) + 'px';
+    msgOptions.style.top = (rect.top + window.scrollY - 150) + 'px';
+    msgOptions.style.left = Math.max(10, rect.left + window.scrollX - 50) + 'px';
+    document.getElementById('editMsgBtn').classList.toggle('hidden', !isMeSelected || selectedMsg.data.deleted);
+    document.getElementById('deleteMsgBtn').classList.toggle('hidden', !isMeSelected);
     msgOptions.classList.remove('hidden');
     if (navigator.vibrate) navigator.vibrate(50);
   }, 500);
 }
-
 function endPress() { clearTimeout(longPressTimer); }
-
-document.addEventListener('click', (e) => {
-  if (!msgOptions.contains(e.target)) {
-    msgOptions.classList.add('hidden');
-  }
-});
+document.addEventListener('click', (e) => { if (!msgOptions.contains(e.target)) msgOptions.classList.add('hidden'); });
 
 document.querySelectorAll('#msgOptions button').forEach(btn => {
   btn.addEventListener('click', async () => {
     if (!selectedMsg) return;
     const action = btn.dataset.action;
-    if (action === 'reply') {
-      setReply(selectedMsg);
-    } else if (action === 'pin') {
-      await updateDoc(doc(db, 'messages', selectedMsg.id), { pinned: !selectedMsg.data.pinned });
-    } else if (action === 'copy') {
-      if (selectedMsg.data.text) {
-        navigator.clipboard.writeText(selectedMsg.data.text);
-        alert('Copied!');
-      }
+    const msgRef = doc(db, 'messages', selectedMsg.id);
+    if (action === 'reply') setReply(selectedMsg);
+    else if (action === 'copy' && selectedMsg.data.text) navigator.clipboard.writeText(selectedMsg.data.text);
+    else if (action === 'edit' && isMeSelected) {
+      const newText = prompt('Edit your message:', selectedMsg.data.text);
+      if (newText && newText.trim() !== '') await updateDoc(msgRef, { text: newText.trim(), edited: true });
+    } else if (action === 'delete' && isMeSelected) {
+      if (confirm('Delete this message for everyone?')) await updateDoc(msgRef, { text: '', deleted: true, deletedBy: userName });
     }
     msgOptions.classList.add('hidden');
   });
 });
 
-// Voice playback
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.play-voice');
   if (btn) {
@@ -667,32 +444,13 @@ document.addEventListener('click', (e) => {
     audio.play();
     btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
     audio.onended = () => { btn.innerHTML = '<i class="fa-solid fa-play"></i>'; };
-    btn.onclick = () => {
-      if (audio.paused) { audio.play(); btn.innerHTML = '<i class="fa-solid fa-pause"></i>'; }
-      else { audio.pause(); btn.innerHTML = '<i class="fa-solid fa-play"></i>'; }
-    };
+    btn.onclick = () => { if (audio.paused) { audio.play(); btn.innerHTML = '<i class="fa-solid fa-pause"></i>'; } else { audio.pause(); btn.innerHTML = '<i class="fa-solid fa-play"></i>'; } };
   }
 });
 
-function closeAllPopups() {
-  emojiPicker.classList.remove('active');
-  attachMenu.classList.add('hidden');
-  reactionPicker.classList.remove('active');
-  msgOptions.classList.add('hidden');
-}
-
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function formatTime(ts) {
-  if (!ts) return '';
-  const d = ts.toDate();
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
+function closeAllPopups() { emojiPicker.classList.remove('active'); attachMenu.classList.add('hidden'); reactionPicker.classList.remove('active'); msgOptions.classList.add('hidden'); }
+function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+function formatTime(ts) { if (!ts) return ''; const d = ts.toDate(); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 </script>
 </body>
 </html>

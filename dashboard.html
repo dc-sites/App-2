@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#87CEEB">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
 </head>
 <body class="dashboard-body">
 
-<!-- App Lock Screen -->
 <div id="lockScreen" class="lock-screen hidden">
   <div class="lock-card">
     <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
@@ -19,33 +19,24 @@
     <p>Enter your PIN to continue</p>
     <div class="pin-display" id="pinDisplay">____</div>
     <div class="pin-pad">
-      <button data-num="1">1</button>
-      <button data-num="2">2</button>
-      <button data-num="3">3</button>
-      <button data-num="4">4</button>
-      <button data-num="5">5</button>
-      <button data-num="6">6</button>
-      <button data-num="7">7</button>
-      <button data-num="8">8</button>
-      <button data-num="9">9</button>
+      <button data-num="1">1</button><button data-num="2">2</button><button data-num="3">3</button>
+      <button data-num="4">4</button><button data-num="5">5</button><button data-num="6">6</button>
+      <button data-num="7">7</button><button data-num="8">8</button><button data-num="9">9</button>
       <button data-num="clear"><i class="fa-solid fa-delete-left"></i></button>
-      <button data-num="0">0</button>
-      <button data-num="enter"><i class="fa-solid fa-check"></i></button>
+      <button data-num="0">0</button><button data-num="enter"><i class="fa-solid fa-check"></i></button>
     </div>
   </div>
 </div>
 
-<!-- Header -->
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
   <div class="topbar-title"><i class="fa-solid fa-house"></i><span>Dashboard</span></div>
-  <button id="notifBtn" class="icon-btn">
+  <button id="notifBtn" class="icon-btn" style="position:relative;">
     <i class="fa-solid fa-bell"></i>
     <span id="notifBadge" class="badge hidden">0</span>
   </button>
 </header>
 
-<!-- Side Menu -->
 <aside id="sideMenu" class="side-menu">
   <div class="profile-section">
     <div class="profile-pic" id="profilePic"><i class="fa-solid fa-user"></i></div>
@@ -62,26 +53,21 @@
     <a href="memories.html"><i class="fa-solid fa-images"></i> Memories</a>
     <a href="othersites.html"><i class="fa-solid fa-globe"></i> Other Sites</a>
     <a href="countdown.html"><i class="fa-solid fa-clock"></i> Countdown</a>
+    <button id="removePhotoBtn" class="menu-btn"><i class="fa-solid fa-user-slash"></i> Remove Photo</button>
     <button id="logoutBtn" class="menu-btn danger"><i class="fa-solid fa-right-from-bracket"></i> Reset Name</button>
   </nav>
 </aside>
 <div id="overlay" class="overlay"></div>
 
-<!-- Notification Panel -->
 <div id="notifPanel" class="notif-panel">
   <div class="notif-header">
     <h3><i class="fa-solid fa-bell"></i> Notifications</h3>
     <button id="clearNotifs" class="icon-btn small"><i class="fa-solid fa-trash"></i></button>
   </div>
-  <div id="notifList" class="notif-list">
-    <p class="empty-notif">No notifications yet</p>
-  </div>
+  <div id="notifList" class="notif-list"><p class="empty-notif">No notifications yet</p></div>
 </div>
 
-<!-- Main Content -->
 <main class="dashboard-container">
-  
-  <!-- Welcome Card -->
   <div class="welcome-card">
     <div class="welcome-text">
       <h2>Hello, <span id="welcomeName">Love</span> 💙</h2>
@@ -90,9 +76,8 @@
     <div class="welcome-icon"><i class="fa-solid fa-heart"></i></div>
   </div>
 
-  <!-- Stats Grid -->
   <div class="stats-grid dash-stats">
-    <div class="stat-card clickable" onclick="location.href='chat.html'">
+    <div class="stat-card clickable" id="newMsgCard">
       <i class="fa-solid fa-envelope"></i>
       <div class="stat-value" id="newMsgCount">0</div>
       <div class="stat-label">New Messages</div>
@@ -114,7 +99,6 @@
     </div>
   </div>
 
-  <!-- Anniversary Progress -->
   <div class="progress-card">
     <div class="progress-header">
       <h3><i class="fa-solid fa-ring"></i> Next Anniversary</h3>
@@ -129,107 +113,47 @@
     </div>
   </div>
 
-  <!-- Quick Actions -->
   <div class="quick-actions">
     <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
     <div class="actions-grid">
-      <a href="chat.html" class="action-btn">
-        <div class="action-icon" style="background:linear-gradient(135deg,#87CEEB,#5FB8E0)">
-          <i class="fa-solid fa-comments"></i>
-        </div>
-        <span>Chat</span>
-      </a>
-      <a href="music.html" class="action-btn">
-        <div class="action-icon" style="background:linear-gradient(135deg,#B19CD9,#9A7FD1)">
-          <i class="fa-solid fa-music"></i>
-        </div>
-        <span>Music</span>
-      </a>
-      <a href="memories.html" class="action-btn">
-        <div class="action-icon" style="background:linear-gradient(135deg,#FFB6C1,#FF9AAE)">
-          <i class="fa-solid fa-images"></i>
-        </div>
-        <span>Memories</span>
-      </a>
-      <a href="countdown.html" class="action-btn">
-        <div class="action-icon" style="background:linear-gradient(135deg,#98FB98,#7AE87A)">
-          <i class="fa-solid fa-clock"></i>
-        </div>
-        <span>Countdown</span>
-      </a>
+      <a href="chat.html" class="action-btn"><div class="action-icon" style="background:linear-gradient(135deg,#87CEEB,#5FB8E0)"><i class="fa-solid fa-comments"></i></div><span>Chat</span></a>
+      <a href="music.html" class="action-btn"><div class="action-icon" style="background:linear-gradient(135deg,#B19CD9,#9A7FD1)"><i class="fa-solid fa-music"></i></div><span>Music</span></a>
+      <a href="memories.html" class="action-btn"><div class="action-icon" style="background:linear-gradient(135deg,#FFB6C1,#FF9AAE)"><i class="fa-solid fa-images"></i></div><span>Memories</span></a>
+      <a href="countdown.html" class="action-btn"><div class="action-icon" style="background:linear-gradient(135deg,#98FB98,#7AE87A)"><i class="fa-solid fa-clock"></i></div><span>Countdown</span></a>
     </div>
   </div>
 
-  <!-- Settings -->
   <div class="settings-card">
+    <h3><i class="fa-solid fa-palette"></i> App Theme (Applies Everywhere)</h3>
+    <div class="theme-grid" style="margin-top:12px;">
+      <div class="theme-option" data-theme="lightblue" style="background:#87CEEB"><span>Light Blue</span></div>
+      <div class="theme-option" data-theme="pink" style="background:#FFB6C1"><span>Pink</span></div>
+      <div class="theme-option" data-theme="purple" style="background:#B19CD9"><span>Purple</span></div>
+      <div class="theme-option" data-theme="mint" style="background:#98FB98"><span>Mint</span></div>
+      <div class="theme-option" data-theme="peach" style="background:#FFDAB9"><span>Peach</span></div>
+      <div class="theme-option" data-theme="lavender" style="background:#E6E6FA"><span>Lavender</span></div>
+    </div>
+  </div>
+
+  <div class="settings-card" style="margin-top:16px;">
     <h3><i class="fa-solid fa-gear"></i> Settings</h3>
-    
     <div class="setting-item">
-      <div class="setting-info">
-        <i class="fa-solid fa-lock"></i>
-        <div>
-          <div class="setting-title">App Lock</div>
-          <div class="setting-desc">Protect app with PIN</div>
-        </div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="appLockToggle">
-        <span class="slider"></span>
-      </label>
+      <div class="setting-info"><i class="fa-solid fa-lock"></i><div><div class="setting-title">App Lock</div><div class="setting-desc">Protect app with PIN</div></div></div>
+      <label class="switch"><input type="checkbox" id="appLockToggle"><span class="slider"></span></label>
     </div>
-    
     <div class="setting-item">
-      <div class="setting-info">
-        <i class="fa-solid fa-user-secret"></i>
-        <div>
-          <div class="setting-title">Secret Mode</div>
-          <div class="setting-desc">Hide app content on shake</div>
-        </div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="secretModeToggle">
-        <span class="slider"></span>
-      </label>
+      <div class="setting-info"><i class="fa-solid fa-user-secret"></i><div><div class="setting-title">Secret Mode</div><div class="setting-desc">Hide app content on shake</div></div></div>
+      <label class="switch"><input type="checkbox" id="secretModeToggle"><span class="slider"></span></label>
     </div>
-    
     <div class="setting-item">
-      <div class="setting-info">
-        <i class="fa-solid fa-bell"></i>
-        <div>
-          <div class="setting-title">Notifications</div>
-          <div class="setting-desc">Get message alerts</div>
-        </div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="notifToggle">
-        <span class="slider"></span>
-      </label>
-    </div>
-    
-    <div class="setting-item">
-      <div class="setting-info">
-        <i class="fa-solid fa-music"></i>
-        <div>
-          <div class="setting-title">Background Music</div>
-          <div class="setting-desc">Play music in background</div>
-        </div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="bgMusicToggle">
-        <span class="slider"></span>
-      </label>
+      <div class="setting-info"><i class="fa-solid fa-bell"></i><div><div class="setting-title">Notifications</div><div class="setting-desc">Get message alerts</div></div></div>
+      <label class="switch"><input type="checkbox" id="notifToggle"><span class="slider"></span></label>
     </div>
   </div>
 
-  <!-- Secret Mode Overlay -->
   <div id="secretOverlay" class="secret-overlay hidden">
-    <div class="secret-content">
-      <i class="fa-solid fa-eye-slash"></i>
-      <h2>Secret Mode Active</h2>
-      <p>Shake again to reveal</p>
-    </div>
+    <div class="secret-content"><i class="fa-solid fa-eye-slash"></i><h2>Secret Mode Active</h2><p>Shake again to reveal</p></div>
   </div>
-
 </main>
 
 <footer class="app-footer">
@@ -260,11 +184,9 @@ if (!userName) { window.location.href = 'index.html'; }
 document.getElementById('userName').textContent = userName;
 document.getElementById('welcomeName').textContent = userName;
 
-// Profile pic
 const profilePic = localStorage.getItem('profilePic_' + userName);
-if (profilePic) {
-  document.getElementById('profilePic').innerHTML = `<img src="${profilePic}" alt="profile">`;
-}
+if (profilePic) document.getElementById('profilePic').innerHTML = `<img src="${profilePic}" alt="profile">`;
+
 document.getElementById('profileUpload').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -276,26 +198,21 @@ document.getElementById('profileUpload').addEventListener('change', (e) => {
   reader.readAsDataURL(file);
 });
 
-// Welcome message based on time
+document.getElementById('removePhotoBtn').addEventListener('click', () => {
+  localStorage.removeItem('profilePic_' + userName);
+  document.getElementById('profilePic').innerHTML = '<i class="fa-solid fa-user"></i>';
+  alert('Profile photo removed!');
+});
+
 const hour = new Date().getHours();
-let greeting = 'Good day';
-if (hour < 12) greeting = 'Good morning';
-else if (hour < 18) greeting = 'Good afternoon';
-else greeting = 'Good evening';
+let greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 document.getElementById('welcomeMsg').textContent = `${greeting}! Here's what's happening...`;
 
-// Side menu
 const sideMenu = document.getElementById('sideMenu');
 const overlay = document.getElementById('overlay');
-document.getElementById('menuBtn').addEventListener('click', () => {
-  sideMenu.classList.add('open'); overlay.classList.add('active');
-});
-overlay.addEventListener('click', () => {
-  sideMenu.classList.remove('open'); overlay.classList.remove('active');
-  document.getElementById('notifPanel').classList.remove('active');
-});
+document.getElementById('menuBtn').addEventListener('click', () => { sideMenu.classList.add('open'); overlay.classList.add('active'); });
+overlay.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.classList.remove('active'); document.getElementById('notifPanel').classList.remove('active'); });
 
-// Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
   if (confirm('Are you sure? This will reset your name.')) {
     localStorage.removeItem('userName');
@@ -303,252 +220,143 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   }
 });
 
-// Days together
 const startDate = new Date('2024-01-23');
 const now = new Date();
 const days = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
 document.getElementById('daysTogether').textContent = days;
 
-// Anniversary progress
 const nextAnniversary = new Date('2025-01-23');
-while (nextAnniversary <= now) {
-  nextAnniversary.setFullYear(nextAnniversary.getFullYear() + 1);
-}
+while (nextAnniversary <= now) nextAnniversary.setFullYear(nextAnniversary.getFullYear() + 1);
 const prevAnniversary = new Date(nextAnniversary);
 prevAnniversary.setFullYear(prevAnniversary.getFullYear() - 1);
 const totalDays = Math.floor((nextAnniversary - prevAnniversary) / (1000 * 60 * 60 * 24));
 const daysPassed = Math.floor((now - prevAnniversary) / (1000 * 60 * 60 * 24));
 const percent = Math.min(100, Math.floor((daysPassed / totalDays) * 100));
-const daysLeft = totalDays - daysPassed;
 
 document.getElementById('anniversaryDate').textContent = nextAnniversary.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 document.getElementById('progressBar').style.width = percent + '%';
 document.getElementById('progressPercent').textContent = percent + '%';
-document.getElementById('daysLeft').textContent = daysLeft + ' days left';
+document.getElementById('daysLeft').textContent = (totalDays - daysPassed) + ' days left';
 
-// Favorite songs count
-const favSongs = JSON.parse(localStorage.getItem('favSongs') || '[]');
-document.getElementById('favSongsCount').textContent = favSongs.length;
+document.getElementById('favSongsCount').textContent = JSON.parse(localStorage.getItem('favSongs') || '[]').length;
 
-// Notifications
 const notifPanel = document.getElementById('notifPanel');
 const notifBadge = document.getElementById('notifBadge');
 let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
 
 function renderNotifications() {
   const list = document.getElementById('notifList');
-  if (notifications.length === 0) {
-    list.innerHTML = '<p class="empty-notif">No notifications yet</p>';
-    notifBadge.classList.add('hidden');
-    return;
-  }
+  if (notifications.length === 0) { list.innerHTML = '<p class="empty-notif">No notifications yet</p>'; notifBadge.classList.add('hidden'); return; }
   list.innerHTML = '';
   notifications.slice(0, 20).forEach(n => {
     const div = document.createElement('div');
     div.className = 'notif-item';
-    div.innerHTML = `
-      <div class="notif-icon"><i class="fa-solid ${n.icon}"></i></div>
-      <div class="notif-content">
-        <div class="notif-title">${n.title}</div>
-        <div class="notif-text">${n.text}</div>
-        <div class="notif-time">${n.time}</div>
-      </div>
-    `;
+    div.innerHTML = `<div class="notif-icon"><i class="fa-solid ${n.icon}"></i></div><div class="notif-content"><div class="notif-title">${n.title}</div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>`;
     list.appendChild(div);
   });
   const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) {
-    notifBadge.textContent = unread;
-    notifBadge.classList.remove('hidden');
-  } else {
-    notifBadge.classList.add('hidden');
-  }
+  if (unread > 0) { notifBadge.textContent = unread > 9 ? '9+' : unread; notifBadge.classList.remove('hidden'); } 
+  else { notifBadge.classList.add('hidden'); }
 }
 
 document.getElementById('notifBtn').addEventListener('click', () => {
   notifPanel.classList.toggle('active');
-  // Mark all as read
   notifications.forEach(n => n.read = true);
   localStorage.setItem('notifications', JSON.stringify(notifications));
   setTimeout(renderNotifications, 500);
 });
+document.getElementById('clearNotifs').addEventListener('click', () => { notifications = []; localStorage.setItem('notifications', JSON.stringify(notifications)); renderNotifications(); });
 
-document.getElementById('clearNotifs').addEventListener('click', () => {
-  notifications = [];
-  localStorage.setItem('notifications', JSON.stringify(notifications));
-  renderNotifications();
-});
-
-// Listen for new messages
 let lastMsgCount = 0;
 const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(50));
 onSnapshot(q, (snapshot) => {
-  const newMsgs = snapshot.docs.filter(d => {
-    const data = d.data();
-    return data.sender !== userName;
-  });
+  const newMsgs = snapshot.docs.filter(d => d.data().sender !== userName);
   const count = newMsgs.length;
   document.getElementById('newMsgCount').textContent = Math.min(count, 99);
   
   if (count > lastMsgCount && lastMsgCount > 0) {
     const latest = newMsgs[0].data();
-    const notif = {
-      icon: 'fa-comment',
-      title: latest.sender,
-      text: latest.type === 'voice' ? '🎤 Voice message' : 
-            latest.type === 'image' ? '📷 Photo' : 
-            latest.type === 'location' ? '📍 Location' : latest.text,
-      time: 'Just now',
-      read: false
-    };
-    notifications.unshift(notif);
+    notifications.unshift({ icon: 'fa-comment', title: latest.sender, text: latest.type === 'voice' ? '🎤 Voice message' : latest.type === 'image' ? '📷 Photo' : latest.text, time: 'Just now', read: false });
     localStorage.setItem('notifications', JSON.stringify(notifications));
     renderNotifications();
-    
-    if (Notification.permission === 'granted' && document.hidden) {
-      new Notification(`${latest.sender} 💬`, { body: notif.text });
-    }
+    if (Notification.permission === 'granted' && document.hidden) new Notification(`${latest.sender} 💬`, { body: latest.text });
   }
   lastMsgCount = count;
 });
-
 renderNotifications();
 
-// Settings
+document.getElementById('newMsgCard').addEventListener('click', () => {
+  localStorage.setItem('lastReadTime', Date.now().toString());
+  window.location.href = 'chat.html';
+});
+
+document.querySelectorAll('.theme-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.documentElement.setAttribute('data-theme', opt.dataset.theme);
+    localStorage.setItem('theme', opt.dataset.theme);
+  });
+});
+
 const appLockToggle = document.getElementById('appLockToggle');
 const secretModeToggle = document.getElementById('secretModeToggle');
 const notifToggle = document.getElementById('notifToggle');
-const bgMusicToggle = document.getElementById('bgMusicToggle');
 
 appLockToggle.checked = localStorage.getItem('appLock') === 'true';
 secretModeToggle.checked = localStorage.getItem('secretMode') === 'true';
-bgMusicToggle.checked = localStorage.getItem('bgMusic') === 'true';
-
-if ('Notification' in window) {
-  notifToggle.checked = Notification.permission === 'granted';
-}
+if ('Notification' in window) notifToggle.checked = Notification.permission === 'granted';
 
 appLockToggle.addEventListener('change', async () => {
   if (appLockToggle.checked) {
     const pin = prompt('Set a 4-digit PIN:');
-    if (pin && /^\d{4}$/.test(pin)) {
-      localStorage.setItem('appPin', pin);
-      localStorage.setItem('appLock', 'true');
-      alert('App lock enabled! 🔒');
-    } else {
-      appLockToggle.checked = false;
-      alert('Invalid PIN. Must be 4 digits.');
-    }
-  } else {
-    localStorage.removeItem('appPin');
-    localStorage.setItem('appLock', 'false');
-  }
+    if (pin && /^\d{4}$/.test(pin)) { localStorage.setItem('appPin', pin); localStorage.setItem('appLock', 'true'); alert('App lock enabled! 🔒'); } 
+    else { appLockToggle.checked = false; alert('Invalid PIN. Must be 4 digits.'); }
+  } else { localStorage.removeItem('appPin'); localStorage.setItem('appLock', 'false'); }
 });
 
 secretModeToggle.addEventListener('change', () => {
   localStorage.setItem('secretMode', secretModeToggle.checked);
-  if (secretModeToggle.checked) {
-    alert('Secret mode enabled! Shake your phone to hide content. 🕵️');
-    enableShakeDetection();
-  }
+  if (secretModeToggle.checked) { alert('Secret mode enabled! Shake your phone to hide content. 🕵️'); enableShakeDetection(); }
 });
 
 notifToggle.addEventListener('change', async () => {
-  if (notifToggle.checked) {
-    if ('Notification' in window) {
-      const perm = await Notification.requestPermission();
-      if (perm !== 'granted') {
-        notifToggle.checked = false;
-        alert('Notification permission denied');
-      }
-    }
+  if (notifToggle.checked && 'Notification' in window) {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { notifToggle.checked = false; alert('Notification permission denied'); }
   }
 });
 
-bgMusicToggle.addEventListener('change', () => {
-  localStorage.setItem('bgMusic', bgMusicToggle.checked);
-  if (bgMusicToggle.checked) {
-    alert('Background music enabled! 🎵');
-  }
-});
-
-// App Lock
 const lockScreen = document.getElementById('lockScreen');
-const pinDisplay = document.getElementById('pinDisplay');
 let pinInput = '';
-
-function checkAppLock() {
-  if (localStorage.getItem('appLock') === 'true') {
-    lockScreen.classList.remove('hidden');
-  }
-}
-
+function checkAppLock() { if (localStorage.getItem('appLock') === 'true') lockScreen.classList.remove('hidden'); }
 document.querySelectorAll('.pin-pad button').forEach(btn => {
   btn.addEventListener('click', () => {
     const num = btn.dataset.num;
-    if (num === 'clear') {
-      pinInput = pinInput.slice(0, -1);
-    } else if (num === 'enter') {
-      if (pinInput === localStorage.getItem('appPin')) {
-        lockScreen.classList.add('hidden');
-        pinInput = '';
-      } else {
-        pinDisplay.classList.add('shake');
-        setTimeout(() => {
-          pinDisplay.classList.remove('shake');
-          pinInput = '';
-          updatePinDisplay();
-        }, 500);
-      }
-    } else if (pinInput.length < 4) {
-      pinInput += num;
-    }
+    if (num === 'clear') pinInput = pinInput.slice(0, -1);
+    else if (num === 'enter') {
+      if (pinInput === localStorage.getItem('appPin')) { lockScreen.classList.add('hidden'); pinInput = ''; } 
+      else { document.getElementById('pinDisplay').classList.add('shake'); setTimeout(() => { document.getElementById('pinDisplay').classList.remove('shake'); pinInput = ''; updatePinDisplay(); }, 500); }
+    } else if (pinInput.length < 4) pinInput += num;
     updatePinDisplay();
   });
 });
-
-function updatePinDisplay() {
-  pinDisplay.textContent = '_'.repeat(4 - pinInput.length) + '*'.repeat(pinInput.length);
-  pinDisplay.textContent = pinInput.split('').map(() => '*').join('') + '_'.repeat(4 - pinInput.length);
-}
-
+function updatePinDisplay() { document.getElementById('pinDisplay').textContent = '*'.repeat(pinInput.length) + '_'.repeat(4 - pinInput.length); }
 checkAppLock();
 
-// Secret Mode - Shake Detection
 function enableShakeDetection() {
-  let lastX = 0, lastY = 0, lastZ = 0;
-  let lastTime = Date.now();
-  
+  let lastX = 0, lastY = 0, lastZ = 0, lastTime = Date.now();
   window.addEventListener('devicemotion', (e) => {
     const acc = e.accelerationIncludingGravity;
     if (!acc) return;
     const currentTime = Date.now();
     if (currentTime - lastTime > 100) {
-      const diffTime = currentTime - lastTime;
-      lastTime = currentTime;
-      const speed = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ) / diffTime * 10000;
-      if (speed > 800) {
-        toggleSecretMode();
-      }
-      lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+      const speed = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ) / (currentTime - lastTime) * 10000;
+      if (speed > 800) document.getElementById('secretOverlay').classList.toggle('hidden');
+      lastX = acc.x; lastY = acc.y; lastZ = acc.z; lastTime = currentTime;
     }
   });
 }
-
-function toggleSecretMode() {
-  if (localStorage.getItem('secretMode') !== 'true') return;
-  const overlay = document.getElementById('secretOverlay');
-  overlay.classList.toggle('hidden');
-}
-
-if (localStorage.getItem('secretMode') === 'true') {
-  enableShakeDetection();
-}
-
-// Request notification permission on load
-if ('Notification' in window && Notification.permission === 'default') {
-  setTimeout(() => Notification.requestPermission(), 3000);
-}
+if (localStorage.getItem('secretMode') === 'true') enableShakeDetection();
+if ('Notification' in window && Notification.permission === 'default') setTimeout(() => Notification.requestPermission(), 3000);
 </script>
 </body>
 </html>

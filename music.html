@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music 🎵</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#87CEEB">
+</head>
+<body class="music-body">
+
+<header class="topbar">
+  <a href="chat.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="topbar-title"><i class="fa-solid fa-music"></i><span>Our Music</span></div>
+  <label class="icon-btn" for="uploadSongs"><i class="fa-solid fa-plus"></i></label>
+  <input type="file" id="uploadSongs" accept="audio/*" multiple hidden>
+</header>
+
+<main class="music-container">
+  <div class="player-card">
+    <div class="album-art">
+      <i class="fa-solid fa-compact-disc spinning"></i>
+    </div>
+    <h2 id="songTitle" class="song-title">No song playing</h2>
+    <p id="artistName" class="artist-name">Upload songs to start</p>
+    
+    <div class="progress-container">
+      <span id="currentTime">0:00</span>
+      <input type="range" id="progressBar" min="0" max="100" value="0" class="progress-bar">
+      <span id="duration">0:00</span>
+    </div>
+    
+    <div class="controls">
+      <button id="prevBtn" class="ctrl-btn"><i class="fa-solid fa-backward"></i></button>
+      <button id="back10Btn" class="ctrl-btn small"><i class="fa-solid fa-rotate-left"></i> 10</button>
+      <button id="playBtn" class="ctrl-btn main"><i class="fa-solid fa-play"></i></button>
+      <button id="forward10Btn" class="ctrl-btn small"><i class="fa-solid fa-rotate-right"></i> 10</button>
+      <button id="nextBtn" class="ctrl-btn"><i class="fa-solid fa-forward"></i></button>
+    </div>
+  </div>
+  
+  <div class="playlist">
+    <h3><i class="fa-solid fa-list"></i> Playlist</h3>
+    <ul id="songList" class="song-list"></ul>
+    <p id="emptyMsg" class="empty-msg"><i class="fa-solid fa-music"></i> No songs yet. Tap + to upload.</p>
+  </div>
+</main>
+<footer class="app-footer">
+  <div class="footer-divider"></div>
+  <p>Designed by <a href="#">Your Crazy Bf</a> 💙</p>
+</footer>
+
+<audio id="audioPlayer"></audio>
+
+<script>
+let songs = JSON.parse(localStorage.getItem('songs') || '[]');
+let currentIndex = 0;
+let isPlaying = false;
+const audio = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const back10Btn = document.getElementById('back10Btn');
+const forward10Btn = document.getElementById('forward10Btn');
+const progressBar = document.getElementById('progressBar');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+const songTitle = document.getElementById('songTitle');
+const songList = document.getElementById('songList');
+const emptyMsg = document.getElementById('emptyMsg');
+
+function renderPlaylist() {
+  songList.innerHTML = '';
+  if (songs.length === 0) {
+    emptyMsg.style.display = 'block';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+  songs.forEach((song, i) => {
+    const li = document.createElement('li');
+    li.className = `song-item ${i === currentIndex ? 'active' : ''}`;
+    li.innerHTML = `
+      <div class="song-info" data-index="${i}">
+        <i class="fa-solid fa-music"></i>
+        <div>
+          <div class="song-name">${song.name}</div>
+          <div class="song-meta">Track ${i + 1}</div>
+        </div>
+      </div>
+      <button class="delete-btn" data-index="${i}"><i class="fa-solid fa-trash"></i></button>
+    `;
+    songList.appendChild(li);
+  });
+}
+
+function loadSong(index) {
+  if (index < 0 || index >= songs.length) return;  currentIndex = index;
+  audio.src = songs[index].data;
+  songTitle.textContent = songs[index].name;
+  renderPlaylist();
+}
+
+function togglePlay() {
+  if (songs.length === 0) return;
+  if (!audio.src) loadSong(0);
+  if (isPlaying) {
+    audio.pause();
+    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  } else {
+    audio.play();
+    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  }
+  isPlaying = !isPlaying;
+}
+
+playBtn.addEventListener('click', togglePlay);
+prevBtn.addEventListener('click', () => {
+  if (songs.length === 0) return;
+  currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+  loadSong(currentIndex);
+  if (isPlaying) audio.play();
+});
+nextBtn.addEventListener('click', () => {
+  if (songs.length === 0) return;
+  currentIndex = (currentIndex + 1) % songs.length;
+  loadSong(currentIndex);
+  if (isPlaying) audio.play();
+});
+back10Btn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+forward10Btn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration, audio.currentTime + 10); });
+
+audio.addEventListener('timeupdate', () => {
+  if (audio.duration) {
+    progressBar.value = (audio.currentTime / audio.duration) * 100;
+    currentTimeEl.textContent = formatTime(audio.currentTime);
+  }
+});
+audio.addEventListener('loadedmetadata', () => {
+  durationEl.textContent = formatTime(audio.duration);
+});
+audio.addEventListener('ended', () => nextBtn.click());
+progressBar.addEventListener('input', () => {
+  audio.currentTime = (progressBar.value / 100) * audio.duration;
+});
+
+document.getElementById('uploadSongs').addEventListener('change', (e) => {  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      songs.push({ name: file.name.replace(/\.[^/.]+$/, ''), data: ev.target.result });
+      localStorage.setItem('songs', JSON.stringify(songs));
+      renderPlaylist();
+      if (songs.length === files.length) loadSong(songs.length - files.length);
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+songList.addEventListener('click', (e) => {
+  const info = e.target.closest('.song-info');
+  const del = e.target.closest('.delete-btn');
+  if (info) {
+    loadSong(parseInt(info.dataset.index));
+    audio.play(); isPlaying = true;
+    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  } else if (del) {
+    const idx = parseInt(del.dataset.index);
+    if (confirm('Delete this song?')) {
+      songs.splice(idx, 1);
+      localStorage.setItem('songs', JSON.stringify(songs));
+      if (currentIndex >= songs.length) currentIndex = 0;
+      if (songs.length > 0) loadSong(currentIndex);
+      else { audio.src = ''; songTitle.textContent = 'No song playing'; }
+      renderPlaylist();
+    }
+  }
+});
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+}
+
+renderPlaylist();
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel 🔒</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
+</head>
+<body class="entry-body">
+
+<div class="entry-container" id="adminLogin">
+  <div class="entry-card">
+    <div class="logo-circle"><i class="fa-solid fa-shield-halved"></i></div>
+    <h1 class="entry-title">Admin Access</h1>
+    <p class="entry-subtitle">Enter admin password</p>
+    <div class="input-group">
+      <i class="fa-solid fa-key input-icon"></i>
+      <input type="password" id="adminPass" placeholder="Password" autocomplete="off">
+    </div>
+    <button id="loginBtn" class="btn-primary">Login</button>
+    <p style="margin-top:15px;"><a href="index.html" style="color:var(--text-light);font-size:13px;text-decoration:none;">← Back to App</a></p>
+  </div>
+</div>
+
+<div class="entry-container hidden" id="adminPanel" style="max-width:600px;">
+  <div class="entry-card" style="text-align:left; padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+      <h2 style="font-size:22px;"><i class="fa-solid fa-users-gear"></i> User Management</h2>
+      <a href="index.html" class="btn-secondary" style="width:auto;padding:8px 16px;margin:0;text-decoration:none;">Logout</a>
+    </div>
+    
+    <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Pending Users</h3>
+    <div id="pendingList" style="margin-bottom:24px;"></div>
+    
+    <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Approved Users</h3>
+    <div id="approvedList"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKKUQUAcRyMeugjQRJ06TfdN2qfLgpRMA",
+  authDomain: "chatweb-3ecb0.firebaseapp.com",
+  projectId: "chatweb-3ecb0",
+  storageBucket: "chatweb-3ecb0.firebasestorage.app",
+  messagingSenderId: "348010514098",
+  appId: "1:348010514098:web:93023cd4faf9d443232bab",
+  measurementId: "G-ZQY3V6PR2K"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById('loginBtn').addEventListener('click', () => {
+  if (document.getElementById('adminPass').value === 'dc') {
+    document.getElementById('adminLogin').classList.add('hidden');
+    document.getElementById('adminPanel').classList.remove('hidden');
+    loadUsers();
+  } else {
+    alert('Wrong password!');
+  }
+});
+
+function loadUsers() {
+  onSnapshot(collection(db, 'users'), (snapshot) => {
+    const pendingList = document.getElementById('pendingList');
+    const approvedList = document.getElementById('approvedList');
+    pendingList.innerHTML = '';
+    approvedList.innerHTML = '';
+    
+    let hasPending = false;
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const name = data.name;
+      if (data.status === 'pending') {
+        hasPending = true;
+        pendingList.innerHTML += `
+          <div class="setting-item" style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;">
+            <div class="setting-info"><i class="fa-solid fa-user-clock"></i><div><div class="setting-title">${name}</div></div></div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-primary" style="width:auto;padding:6px 12px;font-size:12px;" onclick="updateStatus('${name}', 'approved')">Approve</button>
+              <button class="btn-secondary" style="width:auto;padding:6px 12px;font-size:12px;color:#E74C3C;border-color:#E74C3C;" onclick="updateStatus('${name}', 'deleted')">Delete</button>
+            </div>
+          </div>
+        `;
+      } else if (data.status === 'approved') {
+        approvedList.innerHTML += `
+          <div class="setting-item" style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;">
+            <div class="setting-info"><i class="fa-solid fa-user-check" style="color:#4CAF50;"></i><div><div class="setting-title">${name}</div></div></div>
+            <button class="btn-secondary" style="width:auto;padding:6px 12px;font-size:12px;color:#E74C3C;border-color:#E74C3C;" onclick="updateStatus('${name}', 'deleted')">Delete Account</button>
+          </div>
+        `;
+      }
+    });
+    
+    if (!hasPending) pendingList.innerHTML = '<p style="color:var(--text-light);padding:10px;">No pending users</p>';
+    if (approvedList.innerHTML === '') approvedList.innerHTML = '<p style="color:var(--text-light);padding:10px;">No approved users</p>';
+  });
+}
+
+window.updateStatus = async (name, status) => {
+  await updateDoc(doc(db, 'users', name), { status });
+};
+</script>
+</body>
+</html>

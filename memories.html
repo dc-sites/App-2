@@ -8,11 +8,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#87CEEB">
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
 </head>
 <body class="memories-body">
 
 <header class="topbar">
-  <a href="chat.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <a href="dashboard.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a>
   <div class="topbar-title"><i class="fa-solid fa-images"></i><span>Our Memories</span></div>
   <div style="width:40px"></div>
 </header>
@@ -23,36 +24,30 @@
     <h1>Our Precious Memories</h1>
     <p>Download and cherish our moments together</p>
   </div>
-  
   <div class="memories-grid">
     <div class="memory-card" data-file="memories/memory1.zip">
       <div class="memory-icon"><i class="fa-solid fa-folder-open"></i></div>
-      <h3>Memory 01</h3>
-      <p>Our first moments</p>
+      <h3>Memory 01</h3><p>Our first moments</p>
       <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
     <div class="memory-card" data-file="memories/memory2.zip">
       <div class="memory-icon"><i class="fa-solid fa-folder-open"></i></div>
-      <h3>Memory 02</h3>
-      <p>Special days</p>
+      <h3>Memory 02</h3><p>Special days</p>
       <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
     <div class="memory-card" data-file="memories/memory3.zip">
       <div class="memory-icon"><i class="fa-solid fa-folder-open"></i></div>
-      <h3>Memory 03</h3>
-      <p>Adventures together</p>
+      <h3>Memory 03</h3><p>Adventures together</p>
       <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
     <div class="memory-card" data-file="memories/memory4.zip">
       <div class="memory-icon"><i class="fa-solid fa-folder-open"></i></div>
-      <h3>Memory 04</h3>
-      <p>Fun times</p>
+      <h3>Memory 04</h3><p>Fun times</p>
       <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
     <div class="memory-card" data-file="memories/memory5.zip">
       <div class="memory-icon"><i class="fa-solid fa-folder-open"></i></div>
-      <h3>Memory 05</h3>
-      <p>Forever memories</p>
+      <h3>Memory 05</h3><p>Forever memories</p>
       <button class="download-btn"><i class="fa-solid fa-download"></i> Download</button>
     </div>
   </div>
@@ -68,11 +63,8 @@ document.querySelectorAll('.memory-card').forEach(card => {
   card.querySelector('.download-btn').addEventListener('click', () => {
     const file = card.dataset.file;
     const a = document.createElement('a');
-    a.href = file;
-    a.download = file.split('/').pop();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = file; a.download = file.split('/').pop();
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   });
 });
 </script>

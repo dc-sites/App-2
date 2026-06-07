@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat 💬</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#87CEEB">
+</head>
+<body class="chat-body" data-theme="lightblue">
+
+<!-- Top Bar -->
+<header class="topbar">
+  <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
+  <div class="topbar-title">
+    <i class="fa-solid fa-heart"></i>
+    <span>Our Chat</span>
+  </div>
+  <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
+</header>
+
+<!-- Side Menu -->
+<aside id="sideMenu" class="side-menu">
+  <div class="profile-section">
+    <div class="profile-pic" id="profilePic">
+      <i class="fa-solid fa-user"></i>
+    </div>
+    <h3 id="userName">User</h3>
+    <label class="upload-btn">
+      <i class="fa-solid fa-camera"></i> Change Photo
+      <input type="file" id="profileUpload" accept="image/*" hidden>
+    </label>
+  </div>
+  <nav class="menu-nav">
+    <a href="chat.html" class="active"><i class="fa-solid fa-comments"></i> Chat</a>
+    <a href="music.html"><i class="fa-solid fa-music"></i> Music</a>
+    <a href="memories.html"><i class="fa-solid fa-images"></i> Memories</a>
+    <a href="othersites.html"><i class="fa-solid fa-globe"></i> Other Sites</a>
+    <a href="countdown.html"><i class="fa-solid fa-clock"></i> Countdown</a>
+    <button id="notifBtn" class="menu-btn"><i class="fa-solid fa-bell"></i> Enable Notifications</button>
+    <button id="logoutBtn" class="menu-btn danger"><i class="fa-solid fa-right-from-bracket"></i> Reset Name</button>
+  </nav>
+</aside>
+<div id="overlay" class="overlay"></div>
+
+<!-- Theme Picker -->
+<div id="themePicker" class="theme-picker">
+  <h3><i class="fa-solid fa-palette"></i> Choose Theme</h3>  <div class="theme-grid">
+    <div class="theme-option" data-theme="lightblue" style="background:#87CEEB"><span>Light Blue</span></div>
+    <div class="theme-option" data-theme="pink" style="background:#FFB6C1"><span>Pink</span></div>
+    <div class="theme-option" data-theme="purple" style="background:#B19CD9"><span>Purple</span></div>
+    <div class="theme-option" data-theme="mint" style="background:#98FB98"><span>Mint</span></div>
+    <div class="theme-option" data-theme="peach" style="background:#FFDAB9"><span>Peach</span></div>
+    <div class="theme-option" data-theme="lavender" style="background:#E6E6FA"><span>Lavender</span></div>
+  </div>
+  <button id="closeTheme" class="btn-secondary">Close</button>
+</div>
+
+<!-- Chat Messages -->
+<main class="chat-container">
+  <div id="messages" class="messages"></div>
+</main>
+
+<!-- Message Input -->
+<footer class="chat-input">
+  <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
+  <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+  <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
+</footer>
+
+<!-- Emoji Picker -->
+<div id="emojiPicker" class="emoji-picker">
+  <div class="emoji-grid">
+    <span>❤️</span><span>😍</span><span>😘</span><span>🥰</span><span>💕</span>
+    <span>💖</span><span>💗</span><span>💘</span><span>💝</span><span>💞</span>
+    <span>😂</span><span>🤣</span><span>😊</span><span>😎</span><span>🤗</span>
+    <span>🥺</span><span>😭</span><span>😅</span><span>🤭</span><span>🙈</span>
+    <span>👍</span><span>👎</span><span>👏</span><span>🙌</span><span>🤝</span>
+    <span>🔥</span><span>⭐</span><span>✨</span><span>🌹</span><span>🌸</span>
+  </div>
+</div>
+
+<!-- Reaction Picker -->
+<div id="reactionPicker" class="reaction-picker">
+  <span data-reaction="❤️">❤️</span>
+  <span data-reaction="😍">😍</span>
+  <span data-reaction="😂">😂</span>
+  <span data-reaction="😮">😮</span>
+  <span data-reaction="😢">😢</span>
+  <span data-reaction="👍">👍</span>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDKKUQUAcRyMeugjQRJ06TfdN2qfLgpRMA",
+  authDomain: "chatweb-3ecb0.firebaseapp.com",
+  projectId: "chatweb-3ecb0",
+  storageBucket: "chatweb-3ecb0.firebasestorage.app",
+  messagingSenderId: "348010514098",
+  appId: "1:348010514098:web:93023cd4faf9d443232bab",
+  measurementId: "G-ZQY3V6PR2K"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+const userName = localStorage.getItem('userName');
+if (!userName) { window.location.href = 'index.html'; }
+
+document.getElementById('userName').textContent = userName;
+document.getElementById('messages').innerHTML = '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
+
+// Load profile pic
+const profilePic = localStorage.getItem('profilePic_' + userName);
+if (profilePic) {
+  document.getElementById('profilePic').innerHTML = `<img src="${profilePic}" alt="profile">`;
+}
+
+// Profile upload
+document.getElementById('profileUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = ev.target.result;
+    localStorage.setItem('profilePic_' + userName, img);
+    document.getElementById('profilePic').innerHTML = `<img src="${img}" alt="profile">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+// Theme
+const savedTheme = localStorage.getItem('theme') || 'lightblue';
+document.body.setAttribute('data-theme', savedTheme);
+document.getElementById('themeBtn').addEventListener('click', () => {
+  document.getElementById('themePicker').classList.add('active');
+});
+document.getElementById('closeTheme').addEventListener('click', () => {
+  document.getElementById('themePicker').classList.remove('active');
+});
+document.querySelectorAll('.theme-option').forEach(opt => {
+  opt.addEventListener('click', () => {    const theme = opt.dataset.theme;
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  });
+});
+
+// Side menu
+const sideMenu = document.getElementById('sideMenu');
+const overlay = document.getElementById('overlay');
+document.getElementById('menuBtn').addEventListener('click', () => {
+  sideMenu.classList.add('open'); overlay.classList.add('active');
+});
+overlay.addEventListener('click', () => {
+  sideMenu.classList.remove('open'); overlay.classList.remove('active');
+  document.getElementById('emojiPicker').classList.remove('active');
+});
+
+// Notifications
+document.getElementById('notifBtn').addEventListener('click', async () => {
+  if ('Notification' in window) {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      new Notification('Notifications enabled! 💙', { body: "You'll be notified of new messages." });
+    }
+  }
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (confirm('Are you sure? This will reset your name.')) {
+    localStorage.removeItem('userName');
+    window.location.href = 'index.html';
+  }
+});
+
+// Emoji picker
+const emojiPicker = document.getElementById('emojiPicker');
+document.getElementById('emojiBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  emojiPicker.classList.toggle('active');
+});
+document.querySelectorAll('.emoji-grid span').forEach(em => {
+  em.addEventListener('click', () => {
+    document.getElementById('messageInput').value += em.textContent;
+    emojiPicker.classList.remove('active');
+  });
+});
+document.addEventListener('click', (e) => {
+  if (!emojiPicker.contains(e.target) && e.target.id !== 'emojiBtn') {
+    emojiPicker.classList.remove('active');  }
+});
+
+// Send message
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const sendMessage = async () => {
+  const text = messageInput.value.trim();
+  if (!text) return;
+  try {
+    await addDoc(collection(db, 'messages'), {
+      sender: userName,
+      text: text,
+      timestamp: serverTimestamp(),
+      reactions: {}
+    });
+    messageInput.value = '';
+  } catch (err) {
+    console.error('Error:', err);
+  }
+};
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+// Listen for messages
+let lastSenderId = null;
+const messagesDiv = document.getElementById('messages');
+const q = query(collection(db, 'messages'), orderBy('timestamp', 'asc'));
+onSnapshot(q, (snapshot) => {
+  messagesDiv.innerHTML = '';
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    const isMe = data.sender === userName;
+    const msgEl = document.createElement('div');
+    msgEl.className = `message ${isMe ? 'sent' : 'received'}`;
+    const reactions = data.reactions || {};
+    const reactionHtml = Object.keys(reactions).length ? 
+      `<div class="reactions">${Object.entries(reactions).map(([u,r]) => `<span title="${u}">${r}</span>`).join('')}</div>` : '';
+    msgEl.innerHTML = `
+      <div class="message-bubble">
+        <div class="message-sender">${data.sender}</div>
+        <div class="message-text">${escapeHtml(data.text)}</div>
+        ${reactionHtml}
+        <div class="message-time">${formatTime(data.timestamp)}</div>
+      </div>
+      <button class="react-btn" data-id="${docSnap.id}"><i class="fa-regular fa-face-smile"></i></button>
+    `;
+    messagesDiv.appendChild(msgEl);
+    if (!isMe && lastSenderId !== docSnap.id) {
+      lastSenderId = docSnap.id;      if (Notification.permission === 'granted' && document.hidden) {
+        new Notification(`${data.sender} 💬`, { body: data.text, icon: '/icon-192.png' });
+      }
+    }
+  });
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
+
+// Reactions
+const reactionPicker = document.getElementById('reactionPicker');
+let activeMsgId = null;
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.react-btn');
+  if (btn) {
+    activeMsgId = btn.dataset.id;
+    const rect = btn.getBoundingClientRect();
+    reactionPicker.style.top = (rect.top - 50) + 'px';
+    reactionPicker.style.left = (rect.left - 100) + 'px';
+    reactionPicker.classList.add('active');
+  } else if (!reactionPicker.contains(e.target)) {
+    reactionPicker.classList.remove('active');
+  }
+});
+document.querySelectorAll('#reactionPicker span').forEach(r => {
+  r.addEventListener('click', async () => {
+    if (!activeMsgId) return;
+    const msgRef = doc(db, 'messages', activeMsgId);
+    try {
+      const reactions = {};
+      reactions[userName] = r.dataset.reaction;
+      await updateDoc(msgRef, { reactions });
+    } catch (err) { console.error(err); }
+    reactionPicker.classList.remove('active');
+  });
+});
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = ts.toDate();
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+</script>
+</body>
+</html>

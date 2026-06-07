@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown ⏰</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#87CEEB">
+</head>
+<body class="countdown-body">
+
+<header class="topbar">
+  <a href="chat.html" class="icon-btn"><i class="fa-solid fa-arrow-left"></i></a>
+  <div class="topbar-title"><i class="fa-solid fa-clock"></i><span>Our Time</span></div>
+  <div style="width:40px"></div>
+</header>
+
+<main class="countdown-container">
+  <div class="love-header">
+    <i class="fa-solid fa-heart pulse"></i>
+    <h1>Since We've Been Together</h1>
+    <p>Started on January 23, 2024</p>
+  </div>
+  
+  <div class="countdown-grid">
+    <div class="time-box">
+      <div class="time-value" id="years">0</div>
+      <div class="time-label">Years</div>
+    </div>
+    <div class="time-box">
+      <div class="time-value" id="months">0</div>
+      <div class="time-label">Months</div>
+    </div>
+    <div class="time-box">
+      <div class="time-value" id="days">0</div>
+      <div class="time-label">Days</div>
+    </div>
+    <div class="time-box">
+      <div class="time-value" id="hours">0</div>
+      <div class="time-label">Hours</div>
+    </div>
+    <div class="time-box">
+      <div class="time-value" id="minutes">0</div>
+      <div class="time-label">Minutes</div>
+    </div>
+    <div class="time-box">
+      <div class="time-value" id="seconds">0</div>
+      <div class="time-label">Seconds</div>    </div>
+  </div>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <i class="fa-solid fa-heart"></i>
+      <div class="stat-value" id="totalDays">0</div>
+      <div class="stat-label">Total Days</div>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-hourglass"></i>
+      <div class="stat-value" id="totalHours">0</div>
+      <div class="stat-label">Total Hours</div>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-kiss"></i>
+      <div class="stat-value" id="totalMinutes">0</div>
+      <div class="stat-label">Total Minutes</div>
+    </div>
+    <div class="stat-card">
+      <i class="fa-solid fa-heart-pulse"></i>
+      <div class="stat-value" id="heartbeats">0</div>
+      <div class="stat-label">Heartbeats Together</div>
+    </div>
+  </div>
+  
+  <div class="milestone-card">
+    <h3><i class="fa-solid fa-trophy"></i> Next Milestone</h3>
+    <p id="nextMilestone">Calculating...</p>
+  </div>
+  
+  <div class="love-quote">
+    <i class="fa-solid fa-quote-left"></i>
+    <p id="quote">Every second with you is a treasure.</p>
+    <i class="fa-solid fa-quote-right"></i>
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="footer-divider"></div>
+  <p>Designed by <a href="#">Your Crazy Bf</a> 💙</p>
+</footer>
+
+<script>
+const startDate = new Date('2024-01-23T00:00:00');
+const quotes = [
+  "Every second with you is a treasure.",
+  "You are my favorite notification.",
+  "Time stops when I'm with you.",
+  "Forever isn't long enough with you.",  "You make every moment count.",
+  "My heart beats for you, always.",
+  "Love is the best thing we do."
+];
+
+function updateCountdown() {
+  const now = new Date();
+  const diff = now - startDate;
+  
+  let years = now.getFullYear() - startDate.getFullYear();
+  let months = now.getMonth() - startDate.getMonth();
+  let days = now.getDate() - startDate.getDate();
+  
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0) { years--; months += 12; }
+  
+  const totalMs = diff;
+  const totalSec = Math.floor(totalMs / 1000);
+  const totalMin = Math.floor(totalSec / 60);
+  const totalHr = Math.floor(totalMin / 60);
+  const totalD = Math.floor(totalHr / 24);
+  
+  document.getElementById('years').textContent = years;
+  document.getElementById('months').textContent = months;
+  document.getElementById('days').textContent = days;
+  document.getElementById('hours').textContent = now.getHours();
+  document.getElementById('minutes').textContent = now.getMinutes();
+  document.getElementById('seconds').textContent = now.getSeconds();
+  
+  document.getElementById('totalDays').textContent = totalD.toLocaleString();
+  document.getElementById('totalHours').textContent = totalHr.toLocaleString();
+  document.getElementById('totalMinutes').textContent = totalMin.toLocaleString();
+  document.getElementById('heartbeats').textContent = (totalMin * 72).toLocaleString();
+  
+  // Next milestone
+  const milestones = [
+    { days: 100, name: '100 Days' },
+    { days: 365, name: '1 Year' },
+    { days: 500, name: '500 Days' },
+    { days: 730, name: '2 Years' },
+    { days: 1000, name: '1000 Days' },
+    { days: 1095, name: '3 Years' },
+    { days: 1825, name: '5 Years' }
+  ];
+  let next = null;
+  for (const m of milestones) {    if (totalD < m.days) { next = m; break; }
+  }
+  if (next) {
+    const daysLeft = next.days - totalD;
+    document.getElementById('nextMilestone').innerHTML = 
+      `<strong>${next.name}</strong> in ${daysLeft} more days!`;
+  } else {
+    document.getElementById('nextMilestone').textContent = 'You are amazing! 💙';
+  }
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Rotate quotes
+let qIndex = 0;
+setInterval(() => {
+  qIndex = (qIndex + 1) % quotes.length;
+  document.getElementById('quote').textContent = quotes[qIndex];
+}, 5000);
+</script>
+</body>
+</html>

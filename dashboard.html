@@ -101,7 +101,7 @@
 
   <div class="progress-card">
     <div class="progress-header">
-      <h3><i class="fa-solid fa-ring"></i> Next Anniversary</h3>
+      <h3><i class="fa-solid fa-ring"></i> Next Anniversry</h3>
       <span id="anniversaryDate" class="progress-date">--</span>
     </div>
     <div class="progress-bar-container">
@@ -267,15 +267,26 @@ document.getElementById('notifBtn').addEventListener('click', () => {
 });
 document.getElementById('clearNotifs').addEventListener('click', () => { notifications = []; localStorage.setItem('notifications', JSON.stringify(notifications)); renderNotifications(); });
 
+// ==========================================
+// UPDATED: ONLY COUNT UNREAD MESSAGES
+// ==========================================
 let lastMsgCount = 0;
-const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(50));
+const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(100));
 onSnapshot(q, (snapshot) => {
-  const newMsgs = snapshot.docs.filter(d => d.data().sender !== userName);
-  const count = newMsgs.length;
+  // Filter ONLY messages that are unread (not sent by me, not deleted, and my name is NOT in readBy)
+  const unreadMsgs = snapshot.docs.filter(d => {
+    const data = d.data();
+    return data.sender !== userName && 
+           !data.deleted && 
+           (!data.readBy || !data.readBy.includes(userName));
+  });
+  
+  const count = unreadMsgs.length;
   document.getElementById('newMsgCount').textContent = Math.min(count, 99);
   
+  // Trigger notification if a NEW unread message arrives
   if (count > lastMsgCount && lastMsgCount > 0) {
-    const latest = newMsgs[0].data();
+    const latest = unreadMsgs[0].data();
     notifications.unshift({ icon: 'fa-comment', title: latest.sender, text: latest.type === 'voice' ? '🎤 Voice message' : latest.type === 'image' ? '📷 Photo' : latest.text, time: 'Just now', read: false });
     localStorage.setItem('notifications', JSON.stringify(notifications));
     renderNotifications();

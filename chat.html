@@ -190,12 +190,11 @@ onValue(ref(rtdb, 'typing'), (snapshot) => {
 
 onValue(ref(rtdb, 'lastSeen'), (snapshot) => {
   const data = snapshot.val() || {};
-  const lastSeenText = document.getElementById('lastSeenText');
   let latest = null;
   Object.keys(data).forEach(user => { if (user !== userName && (!latest || data[user].timestamp > latest.timestamp)) latest = { user, ...data[user] }; });
   if (latest) {
     const diff = Date.now() - latest.timestamp;
-    lastSeenText.textContent = diff < 60000 ? 'Online' : diff < 3600000 ? `${Math.floor(diff/60000)}m ago` : new Date(latest.timestamp).toLocaleString();
+    // You can add a last seen display element in HTML if desired, currently handled by UI structure
   }
 });
 
@@ -258,15 +257,19 @@ document.getElementById('voiceRecordBtn').addEventListener('click', async () => 
         const reader = new FileReader();
         reader.onload = async (ev) => { await sendMessage({ type: 'voice', audio: ev.target.result }); };
         reader.readAsDataURL(blob); stream.getTracks().forEach(t => t.stop());
+        // Revert input holder
+        messageInput.placeholder = "Type a message...";
+        document.getElementById('voiceRecordBtn').innerHTML = '<i class="fa-solid fa-microphone" style="color:#9C27B0"></i><span>Voice</span>';
+        document.getElementById('voiceRecordBtn').classList.remove('recording');
       };
       mediaRecorder.start();
+      // Show recording status in text input holder
+      messageInput.placeholder = "🎙️ Recording... (tap mic to stop)";
       document.getElementById('voiceRecordBtn').innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i><span>Stop</span>';
       document.getElementById('voiceRecordBtn').classList.add('recording');
     } catch (err) { alert('Microphone access denied'); }
   } else {
-    mediaRecorder.stop();
-    document.getElementById('voiceRecordBtn').innerHTML = '<i class="fa-solid fa-microphone" style="color:#9C27B0"></i><span>Voice</span>';
-    document.getElementById('voiceRecordBtn').classList.remove('recording');
+    mediaRecorder.stop(); // Triggers onstop which reverts the UI
   }
 });
 
@@ -303,14 +306,18 @@ onSnapshot(q, async (snapshot) => {
   renderMessages(allMessages);
   renderPinned();
   
+  // Scroll to first unread message, otherwise scroll to bottom
   setTimeout(() => {
     const unreadMsgEl = Array.from(messagesDiv.querySelectorAll('.message.received')).find(el => {
       const id = el.querySelector('.message-bubble').dataset.id;
       const msg = allMessages.find(m => m.id === id);
       return msg && (!msg.data.readBy || !msg.data.readBy.includes(userName));
     });
-    if (unreadMsgEl) unreadMsgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    else messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    if (unreadMsgEl) {
+      unreadMsgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
   }, 150);
 });
 
@@ -388,6 +395,7 @@ document.querySelectorAll('#reactionPicker span').forEach(r => {
     if (!activeMsgId) return;
     const msgRef = doc(db, 'messages', activeMsgId);
     const updates = {};
+    // Allows two users to react independently without overwriting
     updates['reactions.' + userName] = r.dataset.reaction;
     await updateDoc(msgRef, updates);
     reactionPicker.classList.remove('active');
@@ -411,6 +419,7 @@ function startPress(e) {
     const rect = bubble.getBoundingClientRect();
     msgOptions.style.top = (rect.top + window.scrollY - 150) + 'px';
     msgOptions.style.left = Math.max(10, rect.left + window.scrollX - 50) + 'px';
+    // Only sender can see edit/delete options
     document.getElementById('editMsgBtn').classList.toggle('hidden', !isMeSelected || selectedMsg.data.deleted);
     document.getElementById('deleteMsgBtn').classList.toggle('hidden', !isMeSelected);
     msgOptions.classList.remove('hidden');

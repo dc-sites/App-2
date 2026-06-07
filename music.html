@@ -69,7 +69,7 @@
     </div>
   </div>
   <div class="playlist">
-    <h3><i class="fa-solid fa-list"></i> Playlist</h3>
+    <h3><i class="fa-solid fa-list"></i> Plylist</h3>
     <ul id="songList" class="song-list"></ul>
     <p id="emptyMsg" class="empty-msg"><i class="fa-solid fa-music"></i> No songs yet. Tap + to upload.</p>
   </div>
@@ -83,18 +83,75 @@
 <audio id="audioPlayer"></audio>
 
 <script>
-// Load songs from localStorage on page load
-let songs = [];
-let favSongs = [];
-try {
-  songs = JSON.parse(localStorage.getItem('songs') || '[]');
-  favSongs = JSON.parse(localStorage.getItem('favSongs') || '[]');
-} catch (e) {
-  console.error('Error loading from localStorage:', e);
-  songs = [];
-  favSongs = [];
+// ==========================================
+// IndexedDB Setup (Can store hundreds of MBs)
+// ==========================================
+let db;
+const DB_NAME = 'MusicPlayerDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'songs';
+
+// Initialize IndexedDB
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      db = request.result;
+      resolve(db);
+    };
+    
+    request.onupgradeneeded = (event) => {
+      db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+  });
 }
 
+// Save song to IndexedDB
+function saveSong(song) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.add(song);
+    
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// Get all songs from IndexedDB
+function getAllSongs() {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+    
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// Delete song from IndexedDB
+function deleteSong(id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.delete(id);
+    
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// ==========================================
+// App Variables
+// ==========================================
+let songs = [];
+let favSongs = JSON.parse(localStorage.getItem('favSongs') || '[]');
 let currentIndex = 0;
 let isPlaying = false;
 let isShuffle = false;
@@ -118,31 +175,9 @@ const songList = document.getElementById('songList');
 const emptyMsg = document.getElementById('emptyMsg');
 const discIcon = document.getElementById('discIcon');
 
-// Save songs to localStorage with error handling
-function saveSongsToStorage() {
-  try {
-    localStorage.setItem('songs', JSON.stringify(songs));
-    return true;
-  } catch (e) {
-    console.error('Error saving to localStorage:', e);
-    if (e.name === 'QuotaExceededError' || e.code === 22) {
-      alert('Storage is full! Please delete some songs to add more.');
-    }
-    return false;
-  }
-}
-
-// Save favorites to localStorage with error handling
-function saveFavsToStorage() {
-  try {
-    localStorage.setItem('favSongs', JSON.stringify(favSongs));
-    return true;
-  } catch (e) {
-    console.error('Error saving favorites to localStorage:', e);
-    return false;
-  }
-}
-
+// ==========================================
+// Render Functions
+// ==========================================
 function renderPlaylist() {
   songList.innerHTML = '';
   if (songs.length === 0) { 
@@ -159,7 +194,7 @@ function renderPlaylist() {
       <div class="song-info" data-index="${i}"><i class="fa-solid fa-music"></i><div><div class="song-name">${song.name}</div><div class="song-meta">Track ${i + 1}</div></div></div>
       <div class="song-actions">
         <button class="fav-toggle" data-index="${i}"><i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i></button>
-        <button class="delete-btn" data-index="${i}"><i class="fa-solid fa-trash"></i></button>
+        <button class="delete-btn" data-id="${song.id}"><i class="fa-solid fa-trash"></i></button>
       </div>`;
     songList.appendChild(li);
   });
@@ -213,6 +248,9 @@ function togglePlay() {
   isPlaying = !isPlaying;
 }
 
+// ==========================================
+// Event Listeners
+// ==========================================
 playBtn.addEventListener('click', togglePlay);
 prevBtn.addEventListener('click', () => { 
   if (songs.length === 0) return; 
@@ -247,47 +285,38 @@ progressBar.addEventListener('input', () => {
   audio.currentTime = (progressBar.value / 100) * audio.duration; 
 });
 
-// Upload songs and save to localStorage
-document.getElementById('uploadSongs').addEventListener('change', (e) => {
+// Upload songs and save to IndexedDB
+document.getElementById('uploadSongs').addEventListener('change', async (e) => {
   const files = Array.from(e.target.files);
-  let loaded = 0;
-  const newSongs = [];
   
-  files.forEach(file => {
+  for (const file of files) {
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      newSongs.push({ 
-        name: file.name.replace(/\.[^/.]+$/, ''), 
-        data: ev.target.result 
-      });
+    
+    reader.onload = async (ev) => {
+      const song = {
+        name: file.name.replace(/\.[^/.]+$/, ''),
+        data: ev.target.result
+      };
       
-      loaded++;
-      
-      if (loaded === files.length) {
-        // Add new songs to existing songs array
-        songs = songs.concat(newSongs);
-        
-        // Save to localStorage
-        const saved = saveSongsToStorage();
-        
-        if (saved) {
-          renderPlaylist();
-          loadSong(songs.length - files.length);
-          console.log(`Successfully saved ${files.length} songs to localStorage`);
-        } else {
-          // If save failed, remove the songs we just added
-          songs.splice(songs.length - files.length, files.length);
-          alert('Failed to save songs. Storage might be full.');
-        }
+      try {
+        const id = await saveSong(song);
+        song.id = id;
+        songs.push(song);
+        renderPlaylist();
+        console.log(`Saved song: ${song.name}`);
+      } catch (error) {
+        console.error('Error saving song:', error);
+        alert('Error saving song. Please try again.');
       }
     };
+    
     reader.readAsDataURL(file);
-  });
+  }
   
   e.target.value = '';
 });
 
-songList.addEventListener('click', (e) => {
+songList.addEventListener('click', async (e) => {
   const info = e.target.closest('.song-info');
   const del = e.target.closest('.delete-btn');
   const fav = e.target.closest('.fav-toggle');
@@ -300,29 +329,30 @@ songList.addEventListener('click', (e) => {
     discIcon.classList.add('spinning'); 
   } 
   else if (del) {
-    const idx = parseInt(del.dataset.index);
+    const id = parseInt(del.dataset.id);
     if (confirm('Delete this song?')) {
-      // Remove from array
-      songs.splice(idx, 1);
-      
-      // Save updated array to localStorage
-      saveSongsToStorage();
-      
-      // Adjust current index if needed
-      if (currentIndex >= songs.length) currentIndex = 0;
-      
-      // Load next song or clear player
-      if (songs.length > 0) {
-        loadSong(currentIndex);
-      } else {
-        audio.src = '';
-        songTitle.textContent = 'No song playing';
-        isPlaying = false;
-        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-        discIcon.classList.remove('spinning');
+      try {
+        await deleteSong(id);
+        songs = songs.filter(s => s.id !== id);
+        
+        if (currentIndex >= songs.length) currentIndex = 0;
+        
+        if (songs.length > 0) {
+          loadSong(currentIndex);
+        } else {
+          audio.src = '';
+          songTitle.textContent = 'No song playing';
+          isPlaying = false;
+          playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+          discIcon.classList.remove('spinning');
+        }
+        
+        renderPlaylist();
+        console.log('Song deleted from IndexedDB');
+      } catch (error) {
+        console.error('Error deleting song:', error);
+        alert('Error deleting song. Please try again.');
       }
-      
-      renderPlaylist();
     }
   } 
   else if (fav) {
@@ -346,7 +376,7 @@ document.getElementById('favList').addEventListener('click', (e) => {
   } 
   else if (del) { 
     favSongs = favSongs.filter(f => f.name !== del.dataset.name); 
-    saveFavsToStorage();
+    localStorage.setItem('favSongs', JSON.stringify(favSongs)); 
     renderFavList(); 
     updateFavBtn(); 
     renderPlaylist(); 
@@ -360,7 +390,7 @@ function toggleFavorite(song) {
   } else {
     favSongs.push({ name: song.name, data: song.data });
   }
-  saveFavsToStorage();
+  localStorage.setItem('favSongs', JSON.stringify(favSongs));
   renderPlaylist();
   renderFavList();
   updateFavBtn();
@@ -440,20 +470,39 @@ function formatTime(s) {
   return `${m}:${sec < 10 ? '0' : ''}${sec}`; 
 }
 
-// Initialize on page load
-if (localStorage.getItem('bgMusic') === 'true') {
-  document.getElementById('bgPlayBtn').classList.add('active');
+// ==========================================
+// Initialize App
+// ==========================================
+async function initApp() {
+  try {
+    // Initialize IndexedDB
+    await initDB();
+    console.log('IndexedDB initialized');
+    
+    // Load songs from IndexedDB
+    songs = await getAllSongs();
+    console.log(`Loaded ${songs.length} songs from IndexedDB`);
+    
+    // Load favorites from localStorage
+    if (localStorage.getItem('bgMusic') === 'true') {
+      document.getElementById('bgPlayBtn').classList.add('active');
+    }
+    
+    // Render playlist
+    renderPlaylist();
+    
+    // Load first song if available
+    if (songs.length > 0) {
+      loadSong(0);
+    }
+  } catch (error) {
+    console.error('Error initializing app:', error);
+    alert('Error loading songs. Please refresh the page.');
+  }
 }
 
-// Render playlist from localStorage
-renderPlaylist();
-
-// If there are songs, load the first one
-if (songs.length > 0) {
-  loadSong(0);
-}
-
-console.log(`Loaded ${songs.length} songs from localStorage`);
+// Start the app
+initApp();
 </script>
 </body>
 </html>

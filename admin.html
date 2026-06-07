@@ -7,6 +7,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'lightblue');</script>
+<style>
+  .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+  .admin-tab { flex: 1; padding: 12px; border: none; background: var(--bg); border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--text-light); }
+  .admin-tab.active { background: var(--primary); color: white; }
+  .msg-item { background: var(--bg); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .msg-info { flex: 1; min-width: 0; }
+  .msg-sender { font-weight: 600; font-size: 14px; color: var(--primary-dark); }
+  .msg-text { font-size: 13px; color: var(--text); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-time { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+</style>
 </head>
 <body class="entry-body">
 
@@ -24,24 +34,36 @@
   </div>
 </div>
 
-<div class="entry-container hidden" id="adminPanel" style="max-width:600px;">
+<div class="entry-container hidden" id="adminPanel" style="max-width:700px;">
   <div class="entry-card" style="text-align:left; padding:24px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-      <h2 style="font-size:22px;"><i class="fa-solid fa-users-gear"></i> User Management</h2>
+      <h2 style="font-size:22px;"><i class="fa-solid fa-users-gear"></i> Admin Dashboard</h2>
       <a href="index.html" class="btn-secondary" style="width:auto;padding:8px 16px;margin:0;text-decoration:none;">Logout</a>
     </div>
     
-    <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Pending Users</h3>
-    <div id="pendingList" style="margin-bottom:24px;"></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="showTab('users')"><i class="fa-solid fa-users"></i> Users</button>
+      <button class="admin-tab" onclick="showTab('messages')"><i class="fa-solid fa-comments"></i> All Messages</button>
+    </div>
     
-    <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Approved Users</h3>
-    <div id="approvedList"></div>
+    <div id="usersTab">
+      <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Pending Users</h3>
+      <div id="pendingList" style="margin-bottom:24px;"></div>
+      
+      <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Approved Users</h3>
+      <div id="approvedList"></div>
+    </div>
+    
+    <div id="messagesTab" class="hidden">
+      <h3 style="margin-bottom:12px;color:var(--primary-dark);font-size:16px;">Recent Messages (Admin can delete silently)</h3>
+      <div id="messagesList"></div>
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDKKUQUAcRyMeugjQRJ06TfdN2qfLgpRMA",
@@ -61,10 +83,23 @@ document.getElementById('loginBtn').addEventListener('click', () => {
     document.getElementById('adminLogin').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
     loadUsers();
+    loadMessages();
   } else {
     alert('Wrong password!');
   }
 });
+
+window.showTab = (tab) => {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  event.target.closest('.admin-tab').classList.add('active');
+  if (tab === 'users') {
+    document.getElementById('usersTab').classList.remove('hidden');
+    document.getElementById('messagesTab').classList.add('hidden');
+  } else {
+    document.getElementById('usersTab').classList.add('hidden');
+    document.getElementById('messagesTab').classList.remove('hidden');
+  }
+};
 
 function loadUsers() {
   onSnapshot(collection(db, 'users'), (snapshot) => {
@@ -105,6 +140,47 @@ function loadUsers() {
 
 window.updateStatus = async (name, status) => {
   await updateDoc(doc(db, 'users', name), { status });
+};
+
+function loadMessages() {
+  const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'), limit(100));
+  onSnapshot(q, (snapshot) => {
+    const list = document.getElementById('messagesList');
+    list.innerHTML = '';
+    if (snapshot.empty) {
+      list.innerHTML = '<p style="color:var(--text-light);padding:10px;">No messages yet</p>';
+      return;
+    }
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const time = data.timestamp ? data.timestamp.toDate().toLocaleString() : 'Just now';
+      const textPreview = data.deleted ? '<em style="color:#E74C3C">[Deleted]</em>' : (data.type === 'image' ? '📷 Photo' : data.type === 'voice' ? '🎤 Voice' : data.type === 'location' ? '📍 Location' : data.text);
+      
+      list.innerHTML += `
+        <div class="msg-item">
+          <div class="msg-info">
+            <div class="msg-sender">${data.sender}</div>
+            <div class="msg-text">${textPreview || '[Empty]'}</div>
+            <div class="msg-time">${time}</div>
+          </div>
+          <button class="btn-secondary" style="width:auto;padding:6px 12px;font-size:12px;color:#E74C3C;border-color:#E74C3C;" onclick="deleteMessage('${docSnap.id}')">
+            <i class="fa-solid fa-trash"></i> Delete
+          </button>
+        </div>
+      `;
+    });
+  });
+}
+
+window.deleteMessage = async (msgId) => {
+  if (confirm('Delete this message silently? It will show as deleted in the chat.')) {
+    // Silently marks as deleted without sending any notification
+    await updateDoc(doc(db, 'messages', msgId), { 
+      deleted: true, 
+      deletedBy: 'Admin', 
+      text: '' 
+    });
+  }
 };
 </script>
 </body>

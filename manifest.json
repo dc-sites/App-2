@@ -2,7 +2,7 @@
   "name": "Our Love App",
   "short_name": "DC CHAT",
   "description": "A special app for us",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#F0F8FF",
   "theme_color": "#87CEEB",

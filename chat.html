@@ -123,6 +123,479 @@
   .chat-container.loaded {
     opacity: 1;
   }
+
+  /* ========== NEW FEATURE STYLES ========== */
+
+  /* Scroll to Bottom Button */
+  .scroll-to-bottom {
+    position: absolute;
+    bottom: 90px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #87CEEB;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideUp 0.3s ease;
+  }
+
+  .scroll-to-bottom:hover {
+    transform: scale(1.1);
+    background: #6bb6d9;
+  }
+
+  .scroll-to-bottom.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+  }
+
+  .unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #F44336;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .unread-badge.hidden {
+    display: none;
+  }
+
+  /* Last Seen Display */
+  .last-seen {
+    font-size: 11px;
+    color: #667781;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .last-seen .online-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4CAF50;
+    animation: pulse 2s infinite;
+  }
+
+  .last-seen .offline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #9E9E9E;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Smooth Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .message {
+    animation: fadeIn 0.3s ease;
+  }
+
+  .message.sent {
+    animation: slideUp 0.3s ease;
+  }
+
+  .message.received {
+    animation: slideIn 0.3s ease;
+  }
+
+  /* Text Formatting Styles */
+  .message-text strong {
+    font-weight: bold;
+  }
+
+  .message-text em {
+    font-style: italic;
+  }
+
+  .message-text del {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .message-text code {
+    background: rgba(0,0,0,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+
+  /* Poll Styles */
+  .poll-container {
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+
+  .poll-question {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .poll-option {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .poll-option:hover {
+    border-color: #87CEEB;
+    transform: translateX(2px);
+  }
+
+  .poll-option.voted {
+    border-color: #4CAF50;
+    background: #E8F5E9;
+  }
+
+  .poll-option-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: rgba(135, 206, 235, 0.2);
+    transition: width 0.5s ease;
+    z-index: 0;
+  }
+
+  .poll-option-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .poll-option-text {
+    font-size: 13px;
+  }
+
+  .poll-option-votes {
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+  }
+
+  .poll-total-votes {
+    font-size: 11px;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* Poll Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal.hidden {
+    display: none;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: scaleIn 0.3s ease;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease;
+  }
+
+  .modal-input:focus {
+    outline: none;
+    border-color: #87CEEB;
+  }
+
+  .modal-options {
+    margin-bottom: 16px;
+  }
+
+  .modal-option-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .modal-option-row input {
+    flex: 1;
+  }
+
+  .modal-btn {
+    background: #87CEEB;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .modal-btn:hover {
+    background: #6bb6d9;
+    transform: translateY(-2px);
+  }
+
+  .modal-btn-secondary {
+    background: #e0e0e0;
+    color: #666;
+  }
+
+  .modal-btn-secondary:hover {
+    background: #d0d0d0;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  /* Sticker Picker */
+  .sticker-picker {
+    position: absolute;
+    bottom: 70px;
+    left: 10px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 16px;
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    animation: scaleIn 0.2s ease;
+  }
+
+  .sticker-picker.active {
+    display: block;
+  }
+
+  .sticker-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .sticker-item {
+    font-size: 36px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .sticker-item:hover {
+    background: #f0f0f0;
+    transform: scale(1.2);
+  }
+
+  /* File Message */
+  .file-msg {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    min-width: 200px;
+  }
+
+  .file-icon {
+    font-size: 32px;
+    color: #FF9800;
+  }
+
+  .file-info {
+    flex: 1;
+  }
+
+  .file-name {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+
+  .file-size {
+    font-size: 11px;
+    color: #666;
+  }
+
+  .file-download {
+    color: #87CEEB;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .file-download:hover {
+    transform: scale(1.2);
+  }
+
+  /* Video Message */
+  .video-msg {
+    max-width: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .video-msg video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+  }
+
+  /* Recording Indicator */
+  .recording-indicator {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #F44336;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    animation: pulse 1.5s infinite;
+  }
+
+  .recording-indicator.hidden {
+    display: none;
+  }
+
+  .recording-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    animation: pulse 1s infinite;
+  }
+
+  /* Attach Menu Extended */
+  .attach-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .attach-menu button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .attach-menu button:hover {
+    border-color: #87CEEB;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .attach-menu button i {
+    font-size: 24px;
+  }
+
+  .attach-menu button span {
+    font-size: 11px;
+    color: #666;
+  }
 </style>
 </head>
 <body class="chat-body" data-theme="lightblue">
@@ -136,6 +609,10 @@
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
   <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
+  <div class="last-seen" id="lastSeenDisplay">
+    <span class="online-dot"></span>
+    <span id="lastSeenText">Online</span>
+  </div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
@@ -189,6 +666,12 @@
     <span class="typing-name"></span>
     <div class="typing-dots"><span></span><span></span><span></span></div>
   </div>
+  
+  <!-- Scroll to Bottom Button -->
+  <button id="scrollToBottomBtn" class="scroll-to-bottom hidden">
+    <i class="fa-solid fa-arrow-down"></i>
+    <span id="unreadBadge" class="unread-badge hidden">0</span>
+  </button>
 </main>
 
 <div id="replyPreview" class="reply-preview hidden">
@@ -199,15 +682,22 @@
 <footer class="chat-input">
   <button id="attachBtn" class="icon-btn"><i class="fa-solid fa-plus"></i></button>
   <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
-  <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+  <input type="text" id="messageInput" placeholder="Type a message... Use *bold* _italic_ ~strike~ `code`" autocomplete="off">
   <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
 </footer>
 
 <div id="attachMenu" class="attach-menu hidden">
   <button id="imageBtn"><i class="fa-solid fa-image" style="color:#4CAF50"></i><span>Photo</span></button>
-  <button id="locationBtn"><i class="fa-solid fa-location-dot" style="color:#F44336"></i><span>Location</span></button>
+  <button id="cameraBtn"><i class="fa-solid fa-camera" style="color:#2196F3"></i><span>Camera</span></button>
+  <button id="videoRecordBtn"><i class="fa-solid fa-video" style="color:#E91E63"></i><span>Video</span></button>
   <button id="voiceRecordBtn"><i class="fa-solid fa-microphone" style="color:#9C27B0"></i><span>Voice</span></button>
+  <button id="fileBtn"><i class="fa-solid fa-file" style="color:#FF9800"></i><span>File</span></button>
+  <button id="locationBtn"><i class="fa-solid fa-location-dot" style="color:#F44336"></i><span>Location</span></button>
+  <button id="pollBtn"><i class="fa-solid fa-square-poll-vertical" style="color:#00BCD4"></i><span>Poll</span></button>
+  <button id="stickerBtn"><i class="fa-solid fa-face-grin-stars" style="color:#FF5722"></i><span>Sticker</span></button>
   <input type="file" id="imageUpload" accept="image/*" hidden>
+  <input type="file" id="cameraUpload" accept="image/*" capture="environment" hidden>
+  <input type="file" id="fileUpload" hidden>
 </div>
 
 <div id="emojiPicker" class="emoji-picker">
@@ -216,6 +706,62 @@
     <span>💗</span><span>💘</span><span>💝</span><span>💞</span><span>😂</span><span>🤣</span>
     <span>😊</span><span>😎</span><span>🤗</span><span>🥺</span><span>😭</span><span>😅</span>
     <span>🤭</span><span>🙈</span><span>👍</span><span>👎</span><span>👏</span><span>🙌</span>
+  </div>
+</div>
+
+<!-- Sticker Picker -->
+<div id="stickerPicker" class="sticker-picker">
+  <div class="sticker-grid">
+    <div class="sticker-item">🎉</div>
+    <div class="sticker-item">🎊</div>
+    <div class="sticker-item">🎈</div>
+    <div class="sticker-item">🎁</div>
+    <div class="sticker-item">🎂</div>
+    <div class="sticker-item">🌹</div>
+    <div class="sticker-item">🌸</div>
+    <div class="sticker-item">🌺</div>
+    <div class="sticker-item">🌻</div>
+    <div class="sticker-item">🌼</div>
+    <div class="sticker-item">🌈</div>
+    <div class="sticker-item">⭐</div>
+    <div class="sticker-item">🌟</div>
+    <div class="sticker-item">✨</div>
+    <div class="sticker-item">💫</div>
+    <div class="sticker-item">🌙</div>
+    <div class="sticker-item">☀️</div>
+    <div class="sticker-item">🔥</div>
+    <div class="sticker-item">💯</div>
+    <div class="sticker-item">💥</div>
+    <div class="sticker-item">🎵</div>
+    <div class="sticker-item">🎶</div>
+    <div class="sticker-item">🎸</div>
+    <div class="sticker-item">🎹</div>
+    <div class="sticker-item">🎤</div>
+    <div class="sticker-item">🐶</div>
+    <div class="sticker-item">🐱</div>
+    <div class="sticker-item">🐭</div>
+    <div class="sticker-item">🐹</div>
+    <div class="sticker-item">🐰</div>
+    <div class="sticker-item">🦊</div>
+    <div class="sticker-item">🐻</div>
+    <div class="sticker-item">🐼</div>
+    <div class="sticker-item">🐨</div>
+    <div class="sticker-item">🐯</div>
+    <div class="sticker-item">🦁</div>
+    <div class="sticker-item">🐮</div>
+    <div class="sticker-item">🐷</div>
+    <div class="sticker-item">🐸</div>
+    <div class="sticker-item">🐵</div>
+    <div class="sticker-item">🦄</div>
+    <div class="sticker-item">🐝</div>
+    <div class="sticker-item">🦋</div>
+    <div class="sticker-item">🐢</div>
+    <div class="sticker-item">🐍</div>
+    <div class="sticker-item">🦖</div>
+    <div class="sticker-item">🐙</div>
+    <div class="sticker-item">🦑</div>
+    <div class="sticker-item">🦀</div>
+    <div class="sticker-item">🐠</div>
   </div>
 </div>
 
@@ -229,6 +775,35 @@
   <button data-action="copy"><i class="fa-solid fa-copy"></i> Copy</button>
   <button data-action="edit" id="editMsgBtn" class="hidden"><i class="fa-solid fa-pen"></i> Edit</button>
   <button data-action="delete" id="deleteMsgBtn" class="hidden"><i class="fa-solid fa-trash"></i> Delete</button>
+</div>
+
+<!-- Poll Creation Modal -->
+<div id="pollModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-title"><i class="fa-solid fa-square-poll-vertical"></i> Create Poll</div>
+    <input type="text" id="pollQuestion" class="modal-input" placeholder="Ask a question...">
+    <div class="modal-options" id="pollOptions">
+      <div class="modal-option-row">
+        <input type="text" class="modal-input poll-option-input" placeholder="Option 1">
+      </div>
+      <div class="modal-option-row">
+        <input type="text" class="modal-input poll-option-input" placeholder="Option 2">
+      </div>
+    </div>
+    <button id="addPollOption" class="modal-btn modal-btn-secondary" style="width:100%;margin-bottom:16px">
+      <i class="fa-solid fa-plus"></i> Add Option
+    </button>
+    <div class="modal-actions">
+      <button id="cancelPoll" class="modal-btn modal-btn-secondary">Cancel</button>
+      <button id="createPoll" class="modal-btn">Create Poll</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recording Indicator -->
+<div id="recordingIndicator" class="recording-indicator hidden">
+  <div class="recording-dot"></div>
+  <span id="recordingText">Recording...</span>
 </div>
 
 <script type="module">
@@ -315,6 +890,22 @@ onValue(ref(rtdb, 'typing'), (snapshot) => {
   }
 });
 
+// ========== LAST SEEN DISPLAY ==========
+onValue(ref(rtdb, 'presence'), (snapshot) => {
+  const data = snapshot.val() || {};
+  const onlineUsers = Object.keys(data).filter(u => u !== userName && data[u].online);
+  const lastSeenDisplay = document.getElementById('lastSeenDisplay');
+  const lastSeenText = document.getElementById('lastSeenText');
+  
+  if (onlineUsers.length > 0) {
+    lastSeenDisplay.querySelector('.online-dot').className = 'online-dot';
+    lastSeenText.textContent = `${onlineUsers.length} online`;
+  } else {
+    lastSeenDisplay.querySelector('.online-dot').className = 'offline-dot';
+    lastSeenText.textContent = 'Offline';
+  }
+});
+
 const searchBar = document.getElementById('searchBar');
 document.getElementById('searchBtn').addEventListener('click', () => { searchBar.classList.toggle('hidden'); if (!searchBar.classList.contains('hidden')) document.getElementById('searchInput').focus(); });
 document.getElementById('closeSearch').addEventListener('click', () => { searchBar.classList.add('hidden'); document.getElementById('searchInput').value = ''; renderMessages(allMessages); });
@@ -327,22 +918,35 @@ const emojiPicker = document.getElementById('emojiPicker');
 document.getElementById('emojiBtn').addEventListener('click', (e) => { e.stopPropagation(); emojiPicker.classList.toggle('active'); });
 document.querySelectorAll('.emoji-grid span').forEach(em => em.addEventListener('click', () => { messageInput.value += em.textContent; emojiPicker.classList.remove('active'); }));
 
+// ========== STICKER PICKER ==========
+const stickerPicker = document.getElementById('stickerPicker');
+document.querySelectorAll('.sticker-item').forEach(sticker => {
+  sticker.addEventListener('click', async () => {
+    await sendMessage({ type: 'sticker', sticker: sticker.textContent, text: '' });
+    stickerPicker.classList.remove('active');
+  });
+});
+
 const attachBtn = document.getElementById('attachBtn');
 const attachMenu = document.getElementById('attachMenu');
 let mediaRecorder, audioChunks = [];
+let videoRecorder, videoChunks = [];
 
 attachBtn.addEventListener('click', (e) => {
-  if (mediaRecorder && mediaRecorder.state === 'recording') {
-    mediaRecorder.stop();
+  if ((mediaRecorder && mediaRecorder.state === 'recording') || (videoRecorder && videoRecorder.state === 'recording')) {
+    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    if (videoRecorder && videoRecorder.state === 'recording') videoRecorder.stop();
     return;
   }
   e.stopPropagation();
   attachMenu.classList.toggle('hidden');
+  stickerPicker.classList.remove('active');
 });
 
 document.addEventListener('click', (e) => {
   if (!attachMenu.contains(e.target) && e.target.id !== 'attachBtn') attachMenu.classList.add('hidden');
   if (!emojiPicker.contains(e.target) && e.target.id !== 'emojiBtn') emojiPicker.classList.remove('active');
+  if (!stickerPicker.contains(e.target) && e.target.id !== 'stickerBtn') stickerPicker.classList.remove('active');
 });
 
 document.getElementById('imageBtn').addEventListener('click', () => document.getElementById('imageUpload').click());
@@ -363,6 +967,50 @@ document.getElementById('imageUpload').addEventListener('change', (e) => {
   reader.readAsDataURL(file); e.target.value = '';
 });
 
+// ========== CAMERA CAPTURE ==========
+document.getElementById('cameraBtn').addEventListener('click', () => document.getElementById('cameraUpload').click());
+document.getElementById('cameraUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > 800 || h > 800) { if (w > h) { h = (h * 800) / w; w = 800; } else { w = (w * 800) / h; h = 800; } }
+      canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      await sendMessage({ type: 'image', image: canvas.toDataURL('image/jpeg', 0.7), text: '' });
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file); e.target.value = '';
+  attachMenu.classList.add('hidden');
+});
+
+// ========== FILE SHARING ==========
+document.getElementById('fileBtn').addEventListener('click', () => document.getElementById('fileUpload').click());
+document.getElementById('fileUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('File size must be less than 5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    await sendMessage({ 
+      type: 'file', 
+      file: ev.target.result, 
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      text: '' 
+    });
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+  attachMenu.classList.add('hidden');
+});
+
 document.getElementById('locationBtn').addEventListener('click', () => {
   if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
   navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -379,6 +1027,11 @@ document.getElementById('voiceRecordBtn').addEventListener('click', async () => 
     audioChunks = [];
     mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
     
+    const recordingIndicator = document.getElementById('recordingIndicator');
+    const recordingText = document.getElementById('recordingText');
+    recordingText.textContent = 'Recording voice...';
+    recordingIndicator.classList.remove('hidden');
+    
     mediaRecorder.onstop = async () => {
       const blob = new Blob(audioChunks, { type: 'audio/webm' });
       const reader = new FileReader();
@@ -388,17 +1041,122 @@ document.getElementById('voiceRecordBtn').addEventListener('click', async () => 
       
       attachBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
       attachBtn.classList.remove('recording');
-      messageInput.placeholder = "Type a message...";
+      messageInput.placeholder = "Type a message... Use *bold* _italic_ ~strike~ `code`";
+      recordingIndicator.classList.add('hidden');
     };
     
     mediaRecorder.start();
     
     attachBtn.innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i>';
     attachBtn.classList.add('recording');
-    messageInput.placeholder = "🎙️ Recording...";
+    messageInput.placeholder = "🎙️ Recording... Tap + to stop";
   } catch (err) { 
     alert('Microphone access denied'); 
   }
+});
+
+// ========== VIDEO RECORDING ==========
+document.getElementById('videoRecordBtn').addEventListener('click', async () => {
+  attachMenu.classList.add('hidden');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    videoRecorder = new MediaRecorder(stream);
+    videoChunks = [];
+    videoRecorder.ondataavailable = (e) => videoChunks.push(e.data);
+    
+    const recordingIndicator = document.getElementById('recordingIndicator');
+    const recordingText = document.getElementById('recordingText');
+    recordingText.textContent = 'Recording video...';
+    recordingIndicator.classList.remove('hidden');
+    
+    videoRecorder.onstop = async () => {
+      const blob = new Blob(videoChunks, { type: 'video/webm' });
+      const reader = new FileReader();
+      reader.onload = async (ev) => { 
+        await sendMessage({ type: 'video', video: ev.target.result, text: '' });
+        stream.getTracks().forEach(t => t.stop());
+      };
+      reader.readAsDataURL(blob);
+      
+      attachBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+      attachBtn.classList.remove('recording');
+      messageInput.placeholder = "Type a message... Use *bold* _italic_ ~strike~ `code`";
+      recordingIndicator.classList.add('hidden');
+    };
+    
+    videoRecorder.start();
+    
+    attachBtn.innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i>';
+    attachBtn.classList.add('recording');
+    messageInput.placeholder = "🎥 Recording video... Tap + to stop";
+  } catch (err) {
+    alert('Camera access denied');
+  }
+});
+
+// ========== POLL CREATION ==========
+const pollModal = document.getElementById('pollModal');
+document.getElementById('pollBtn').addEventListener('click', () => {
+  pollModal.classList.remove('hidden');
+  attachMenu.classList.add('hidden');
+});
+
+document.getElementById('cancelPoll').addEventListener('click', () => {
+  pollModal.classList.add('hidden');
+  document.getElementById('pollQuestion').value = '';
+  document.querySelectorAll('.poll-option-input').forEach(input => input.value = '');
+});
+
+document.getElementById('addPollOption').addEventListener('click', () => {
+  const optionsContainer = document.getElementById('pollOptions');
+  const optionCount = optionsContainer.children.length + 1;
+  const newRow = document.createElement('div');
+  newRow.className = 'modal-option-row';
+  newRow.innerHTML = `<input type="text" class="modal-input poll-option-input" placeholder="Option ${optionCount}">`;
+  optionsContainer.appendChild(newRow);
+});
+
+document.getElementById('createPoll').addEventListener('click', async () => {
+  const question = document.getElementById('pollQuestion').value.trim();
+  const options = Array.from(document.querySelectorAll('.poll-option-input'))
+    .map(input => input.value.trim())
+    .filter(opt => opt !== '');
+  
+  if (!question) {
+    alert('Please enter a question');
+    return;
+  }
+  if (options.length < 2) {
+    alert('Please add at least 2 options');
+    return;
+  }
+  
+  await sendMessage({
+    type: 'poll',
+    question: question,
+    options: options,
+    votes: {},
+    text: ''
+  });
+  
+  pollModal.classList.add('hidden');
+  document.getElementById('pollQuestion').value = '';
+  document.querySelectorAll('.poll-option-input').forEach(input => input.value = '');
+  document.getElementById('pollOptions').innerHTML = `
+    <div class="modal-option-row">
+      <input type="text" class="modal-input poll-option-input" placeholder="Option 1">
+    </div>
+    <div class="modal-option-row">
+      <input type="text" class="modal-input poll-option-input" placeholder="Option 2">
+    </div>
+  `;
+});
+
+// Sticker button
+document.getElementById('stickerBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  stickerPicker.classList.toggle('active');
+  attachMenu.classList.add('hidden');
 });
 
 let currentReply = null;
@@ -425,9 +1183,12 @@ messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMe
 const messagesDiv = document.getElementById('messages');
 let allMessages = [], pinnedMessages = [];
 let isFirstLoad = true;
+let unreadCount = 0;
+let isAtBottom = true;
 
 const q = query(collection(db, 'messages'), orderBy('timestamp', 'asc'));
 onSnapshot(q, async (snapshot) => {
+  const previousCount = allMessages.length;
   allMessages = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
   const unread = allMessages.filter(m => m.data.sender !== userName && (!m.data.readBy || !m.data.readBy.includes(userName)));
   for (const m of unread) { try { await updateDoc(doc(db, 'messages', m.id), { readBy: arrayUnion(userName) }); } catch (e) {} }
@@ -446,12 +1207,71 @@ onSnapshot(q, async (snapshot) => {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }, 300);
   } else {
-    // Scroll to bottom on new messages
-    setTimeout(() => {
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }, 100);
+    // Check if new messages are from others and we're not at bottom
+    const newMessages = allMessages.slice(previousCount);
+    const hasNewFromOthers = newMessages.some(m => m.data.sender !== userName);
+    
+    if (isAtBottom || !hasNewFromOthers) {
+      setTimeout(() => {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }, 100);
+    } else if (hasNewFromOthers) {
+      unreadCount += newMessages.filter(m => m.data.sender !== userName).length;
+      updateScrollButton();
+    }
   }
 });
+
+// ========== SCROLL TO BOTTOM BUTTON ==========
+const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+const unreadBadge = document.getElementById('unreadBadge');
+
+messagesDiv.addEventListener('scroll', () => {
+  const threshold = 100;
+  isAtBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < threshold;
+  
+  if (isAtBottom) {
+    scrollToBottomBtn.classList.add('hidden');
+    unreadCount = 0;
+    unreadBadge.classList.add('hidden');
+  } else {
+    scrollToBottomBtn.classList.remove('hidden');
+    updateScrollButton();
+  }
+});
+
+scrollToBottomBtn.addEventListener('click', () => {
+  messagesDiv.scrollTo({
+    top: messagesDiv.scrollHeight,
+    behavior: 'smooth'
+  });
+  unreadCount = 0;
+  unreadBadge.classList.add('hidden');
+});
+
+function updateScrollButton() {
+  if (unreadCount > 0) {
+    unreadBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+    unreadBadge.classList.remove('hidden');
+  }
+}
+
+// ========== TEXT FORMATTING ==========
+function formatText(text) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+  // Bold: *text*
+  html = html.replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
+  // Italic: _text_
+  html = html.replace(/\_([^_\n]+)\_/g, '<em>$1</em>');
+  // Strikethrough: ~text~
+  html = html.replace(/\~([^~\n]+)\~/g, '<del>$1</del>');
+  // Code: `text`
+  html = html.replace(/\`([^\`\n]+)\`/g, '<code>$1</code>');
+  // Line breaks
+  html = html.replace(/\n/g, '<br>');
+  return html;
+}
 
 function renderMessages(msgs) {
   messagesDiv.innerHTML = '';
@@ -470,10 +1290,30 @@ function renderMessages(msgs) {
       contentHtml = `<img src="${data.image}" class="msg-image" alt="image">`;
     } else if (data.type === 'voice') {
       contentHtml = `<div class="voice-msg"><button class="play-voice" data-src="${data.audio}"><i class="fa-solid fa-play"></i></button><span>Voice message</span></div>`;
+    } else if (data.type === 'video') {
+      contentHtml = `<div class="video-msg"><video controls src="${data.video}"></video></div>`;
     } else if (data.type === 'location') {
       contentHtml = `<a href="https://maps.google.com/?q=${data.lat},${data.lng}" target="_blank" class="location-msg"><i class="fa-solid fa-location-dot"></i> View Location</a>`;
+    } else if (data.type === 'sticker') {
+      contentHtml = `<div style="font-size:64px;text-align:center;">${data.sticker}</div>`;
+    } else if (data.type === 'file') {
+      const fileSize = formatFileSize(data.fileSize);
+      contentHtml = `
+        <div class="file-msg">
+          <i class="fa-solid fa-file file-icon"></i>
+          <div class="file-info">
+            <div class="file-name">${escapeHtml(data.fileName)}</div>
+            <div class="file-size">${fileSize}</div>
+          </div>
+          <a href="${data.file}" download="${escapeHtml(data.fileName)}" class="file-download">
+            <i class="fa-solid fa-download"></i>
+          </a>
+        </div>
+      `;
+    } else if (data.type === 'poll') {
+      contentHtml = renderPoll(data, msg.id);
     } else {
-      contentHtml = escapeHtml(data.text) + (data.edited ? ' <span style="font-size:10px;opacity:0.6">edited</span>' : '');
+      contentHtml = formatText(data.text) + (data.edited ? ' <span style="font-size:10px;opacity:0.6">edited</span>' : '');
     }
     
     const reactions = data.reactions || {};
@@ -495,6 +1335,55 @@ function renderMessages(msgs) {
     messagesDiv.appendChild(msgEl);
   });
 }
+
+// ========== POLL RENDERING & VOTING ==========
+function renderPoll(data, msgId) {
+  const votes = data.votes || {};
+  const totalVotes = Object.keys(votes).length;
+  const myVote = votes[userName];
+  
+  const optionsHtml = data.options.map((option, index) => {
+    const voteCount = Object.values(votes).filter(v => v === index).length;
+    const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+    const isVoted = myVote === index;
+    
+    return `
+      <div class="poll-option ${isVoted ? 'voted' : ''}" data-msg-id="${msgId}" data-option-index="${index}">
+        <div class="poll-option-bar" style="width: ${percentage}%"></div>
+        <div class="poll-option-content">
+          <span class="poll-option-text">${escapeHtml(option)} ${isVoted ? '✓' : ''}</span>
+          <span class="poll-option-votes">${voteCount} (${percentage}%)</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  return `
+    <div class="poll-container">
+      <div class="poll-question">📊 ${escapeHtml(data.question)}</div>
+      ${optionsHtml}
+      <div class="poll-total-votes">${totalVotes} vote${totalVotes !== 1 ? 's' : ''}</div>
+    </div>
+  `;
+}
+
+// Poll voting handler
+document.addEventListener('click', async (e) => {
+  const pollOption = e.target.closest('.poll-option');
+  if (pollOption) {
+    const msgId = pollOption.dataset.msgId;
+    const optionIndex = parseInt(pollOption.dataset.optionIndex);
+    const msgRef = doc(db, 'messages', msgId);
+    
+    try {
+      await updateDoc(msgRef, {
+        [`votes.${userName}`]: optionIndex
+      });
+    } catch (err) {
+      console.error('Error voting:', err);
+    }
+  }
+});
 
 function renderPinned() {
   const pinnedDiv = document.getElementById('pinnedMessages');
@@ -588,9 +1477,25 @@ document.addEventListener('click', (e) => {
   }
 });
 
-function closeAllPopups() { emojiPicker.classList.remove('active'); attachMenu.classList.add('hidden'); reactionPicker.classList.remove('active'); msgOptions.classList.add('hidden'); }
+function closeAllPopups() { 
+  emojiPicker.classList.remove('active'); 
+  attachMenu.classList.add('hidden'); 
+  reactionPicker.classList.remove('active'); 
+  msgOptions.classList.add('hidden');
+  stickerPicker.classList.remove('active');
+}
+
 function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 function formatTime(ts) { if (!ts) return ''; const d = ts.toDate(); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+
+// ========== FILE SIZE FORMATTER ==========
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
 </script>
 </body>
 </html>

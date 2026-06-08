@@ -124,38 +124,34 @@
     opacity: 1;
   }
 
-  /* ========== NEW FEATURE STYLES ========== */
-
-  /* Scroll to Bottom Button - WhatsApp Style */
+  /* ========== SCROLL TO BOTTOM BUTTON ========== */
   .scroll-to-bottom {
     position: absolute;
     bottom: 90px;
     right: 20px;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: white;
     color: #87CEEB;
     border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     cursor: pointer;
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: slideUp 0.3s ease;
+    opacity: 0.7;
   }
 
   .scroll-to-bottom:hover {
+    opacity: 1;
     transform: scale(1.1);
-    background: #f5f5f5;
   }
 
   .scroll-to-bottom.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(20px);
+    display: none;
   }
 
   .unread-badge {
@@ -165,14 +161,14 @@
     background: #F44336;
     color: white;
     border-radius: 50%;
-    min-width: 22px;
-    height: 22px;
-    font-size: 11px;
+    min-width: 20px;
+    height: 20px;
+    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    padding: 0 4px;
+    padding: 0 3px;
   }
 
   .unread-badge.hidden {
@@ -568,15 +564,15 @@
   }
 
   .slide-reply-icon {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: #87CEEB;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     transition: transform 0.2s ease;
   }
@@ -585,59 +581,44 @@
     transform: scale(1.2);
   }
 
-  .slide-reply-preview {
-    position: absolute;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-    background: white;
-    padding: 12px 16px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    display: flex;
+  /* Reply Preview in Input Area */
+  .inline-reply-preview {
+    background: #f5f5f5;
+    padding: 8px 12px;
+    border-left: 3px solid #87CEEB;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    display: none;
     align-items: center;
-    gap: 12px;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 200;
-    border-top: 3px solid #87CEEB;
-  }
-
-  .slide-reply-preview.active {
-    transform: translateY(0);
-  }
-
-  .slide-reply-preview-icon {
-    color: #87CEEB;
-    font-size: 20px;
-  }
-
-  .slide-reply-preview-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .slide-reply-preview-name {
-    font-weight: 600;
+    gap: 8px;
     font-size: 13px;
-    color: #87CEEB;
-    margin-bottom: 2px;
   }
 
-  .slide-reply-preview-text {
-    font-size: 12px;
+  .inline-reply-preview.active {
+    display: flex;
+  }
+
+  .inline-reply-preview-name {
+    font-weight: 600;
+    color: #87CEEB;
+  }
+
+  .inline-reply-preview-text {
     color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 200px;
   }
 
-  .slide-reply-preview-close {
+  .inline-reply-preview-close {
     background: none;
     border: none;
     color: #999;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
-    padding: 4px;
+    margin-left: auto;
+    padding: 0 4px;
   }
 </style>
 </head>
@@ -706,22 +687,12 @@
     <div class="typing-dots"><span></span><span></span><span></span></div>
   </div>
   
-  <!-- Scroll to Bottom Button - WhatsApp Style -->
-  <button id="scrollToBottomBtn" class="scroll-to-bottom hidden">
+  <!-- Scroll to Bottom Button - Always visible but small -->
+  <button id="scrollToBottomBtn" class="scroll-to-bottom">
     <i class="fa-solid fa-arrow-down"></i>
     <span id="unreadBadge" class="unread-badge hidden">0</span>
   </button>
 </main>
-
-<!-- Slide Reply Preview -->
-<div id="slideReplyPreview" class="slide-reply-preview">
-  <i class="fa-solid fa-reply slide-reply-preview-icon"></i>
-  <div class="slide-reply-preview-content">
-    <div class="slide-reply-preview-name" id="slideReplyName"></div>
-    <div class="slide-reply-preview-text" id="slideReplyText"></div>
-  </div>
-  <button id="cancelSlideReply" class="slide-reply-preview-close"><i class="fa-solid fa-xmark"></i></button>
-</div>
 
 <div id="replyPreview" class="reply-preview hidden">
   <div class="reply-content"><i class="fa-solid fa-reply"></i><div><div class="reply-name" id="replyName"></div><div class="reply-text" id="replyText"></div></div></div>
@@ -729,10 +700,23 @@
 </div>
 
 <footer class="chat-input">
-  <button id="attachBtn" class="icon-btn"><i class="fa-solid fa-plus"></i></button>
-  <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
-  <input type="text" id="messageInput" placeholder="Type a message... Use *bold* _italic_ ~strike~ `code`" autocomplete="off">
-  <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
+  <div style="width:100%">
+    <!-- Inline Reply Preview -->
+    <div id="inlineReplyPreview" class="inline-reply-preview">
+      <i class="fa-solid fa-reply" style="color:#87CEEB"></i>
+      <div>
+        <span class="inline-reply-preview-name" id="inlineReplyName"></span>
+        <div class="inline-reply-preview-text" id="inlineReplyText"></div>
+      </div>
+      <button id="cancelInlineReply" class="inline-reply-preview-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="attachBtn" class="icon-btn"><i class="fa-solid fa-plus"></i></button>
+      <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
+      <input type="text" id="messageInput" placeholder="Type a message... Use *bold* _italic_ ~strike~ `code`" autocomplete="off" style="flex:1">
+      <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
 </footer>
 
 <div id="attachMenu" class="attach-menu hidden">
@@ -1119,25 +1103,30 @@ document.getElementById('createPoll').addEventListener('click', async () => {
 
 let currentReply = null;
 const replyPreview = document.getElementById('replyPreview');
+const inlineReplyPreview = document.getElementById('inlineReplyPreview');
+
 function setReply(msg) { 
   currentReply = msg; 
   document.getElementById('replyName').textContent = msg.data.sender; 
   document.getElementById('replyText').textContent = msg.data.text || '[Attachment]'; 
-  replyPreview.classList.remove('hidden'); 
+  replyPreview.classList.remove('hidden');
+  
+  // Also show inline reply preview
+  document.getElementById('inlineReplyName').textContent = msg.data.sender;
+  document.getElementById('inlineReplyText').textContent = msg.data.text || '[Attachment]';
+  inlineReplyPreview.classList.add('active');
+  
   messageInput.focus(); 
 }
+
 function cancelReply() { 
   currentReply = null; 
-  replyPreview.classList.add('hidden'); 
-  // Also hide slide reply preview
-  document.getElementById('slideReplyPreview').classList.remove('active');
+  replyPreview.classList.add('hidden');
+  inlineReplyPreview.classList.remove('active');
 }
-document.getElementById('cancelReply').addEventListener('click', cancelReply);
 
-// ========== SLIDE REPLY PREVIEW CANCEL ==========
-document.getElementById('cancelSlideReply').addEventListener('click', () => {
-  document.getElementById('slideReplyPreview').classList.remove('active');
-});
+document.getElementById('cancelReply').addEventListener('click', cancelReply);
+document.getElementById('cancelInlineReply').addEventListener('click', cancelReply);
 
 const sendMessage = async (extra = {}) => {
   const text = messageInput.value.trim();
@@ -1181,6 +1170,8 @@ onSnapshot(q, async (snapshot) => {
     // Wait for container to be visible, then scroll to bottom
     setTimeout(() => {
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      // Hide scroll button initially since we're at bottom
+      document.getElementById('scrollToBottomBtn').classList.add('hidden');
     }, 300);
   } else {
     // Check if new messages arrived
@@ -1200,6 +1191,8 @@ onSnapshot(q, async (snapshot) => {
         const unreadNew = newMsgs.filter(m => m.data.sender !== userName).length;
         unreadCount += unreadNew;
         updateScrollButton();
+        // Show scroll button
+        document.getElementById('scrollToBottomBtn').classList.remove('hidden');
       }
     }
     
@@ -1207,7 +1200,7 @@ onSnapshot(q, async (snapshot) => {
   }
 });
 
-// ========== SCROLL TO BOTTOM BUTTON - WHATSAPP STYLE ==========
+// ========== SCROLL TO BOTTOM BUTTON ==========
 const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
 const unreadBadge = document.getElementById('unreadBadge');
 
@@ -1242,11 +1235,6 @@ scrollToBottomBtn.addEventListener('click', () => {
   // Reset unread count
   unreadCount = 0;
   unreadBadge.classList.add('hidden');
-  
-  // Hide button after scroll starts
-  setTimeout(() => {
-    scrollToBottomBtn.classList.add('hidden');
-  }, 300);
 });
 
 function updateScrollButton() {
@@ -1379,19 +1367,6 @@ function initializeSlideToReply() {
         } else {
           overlay.classList.remove('active');
         }
-        
-        // Show preview when threshold reached
-        const slidePreview = document.getElementById('slideReplyPreview');
-        if (translateX >= threshold) {
-          const msg = allMessages.find(m => m.id === msgId);
-          if (msg) {
-            document.getElementById('slideReplyName').textContent = msg.data.sender;
-            document.getElementById('slideReplyText').textContent = msg.data.text || '[Attachment]';
-            slidePreview.classList.add('active');
-          }
-        } else {
-          slidePreview.classList.remove('active');
-        }
       }
     }, { passive: true });
     
@@ -1403,7 +1378,6 @@ function initializeSlideToReply() {
       }
       
       const diff = currentX - startX;
-      const slidePreview = document.getElementById('slideReplyPreview');
       
       if (diff >= threshold) {
         // Trigger reply
@@ -1417,7 +1391,6 @@ function initializeSlideToReply() {
       // Reset bubble position
       bubble.style.transform = '';
       overlay.classList.remove('active');
-      slidePreview.classList.remove('active');
       bubble.classList.remove('swiping');
       startX = 0;
       currentX = 0;
@@ -1451,18 +1424,6 @@ function initializeSlideToReply() {
         } else {
           overlay.classList.remove('active');
         }
-        
-        const slidePreview = document.getElementById('slideReplyPreview');
-        if (translateX >= threshold) {
-          const msg = allMessages.find(m => m.id === msgId);
-          if (msg) {
-            document.getElementById('slideReplyName').textContent = msg.data.sender;
-            document.getElementById('slideReplyText').textContent = msg.data.text || '[Attachment]';
-            slidePreview.classList.add('active');
-          }
-        } else {
-          slidePreview.classList.remove('active');
-        }
       }
     });
     
@@ -1470,7 +1431,6 @@ function initializeSlideToReply() {
       if (!mouseDown) return;
       
       const diff = currentX - startX;
-      const slidePreview = document.getElementById('slideReplyPreview');
       
       if (diff >= threshold) {
         const msg = allMessages.find(m => m.id === msgId);
@@ -1481,7 +1441,6 @@ function initializeSlideToReply() {
       
       bubble.style.transform = '';
       overlay.classList.remove('active');
-      slidePreview.classList.remove('active');
       bubble.classList.remove('swiping');
       mouseDown = false;
       startX = 0;

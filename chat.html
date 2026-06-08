@@ -47,8 +47,7 @@
     font-weight: 500;
   }
   
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
+  @keyframes spin {    0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
   
@@ -97,8 +96,7 @@
   .typing-dots span:nth-child(1) {
     animation-delay: -0.32s;
   }
-  
-  .typing-dots span:nth-child(2) {
+    .typing-dots span:nth-child(2) {
     animation-delay: -0.16s;
   }
   
@@ -124,10 +122,10 @@
     opacity: 1;
   }
 
-  /* ========== SCROLL TO BOTTOM BUTTON ========== */
+  /* ========== SCROLL TO BOTTOM BUTTON (FIXED FOR WHATSAPP STYLE) ========== */
   .scroll-to-bottom {
-    position: absolute;
-    bottom: 90px;
+    position: fixed; /* Changed from absolute to fixed so it stays on screen */
+    bottom: 80px;    /* Adjusted to sit perfectly above the input footer */
     right: 20px;
     width: 40px;
     height: 40px;
@@ -137,17 +135,17 @@
     border: none;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     cursor: pointer;
-    z-index: 100;
+    z-index: 1000;   /* Increased z-index to ensure it's above all chat content */
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0.7;
+    opacity: 0.9;
   }
 
   .scroll-to-bottom:hover {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.1);  
   }
 
   .scroll-to-bottom.hidden {
@@ -197,7 +195,7 @@
   }
 
   .message {
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.3s ease;  
   }
 
   .message.sent {
@@ -247,8 +245,7 @@
   .poll-option {
     background: white;
     border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 10px 12px;
+    border-radius: 8px;    padding: 10px 12px;
     margin-bottom: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -297,8 +294,7 @@
   .poll-total-votes {
     font-size: 11px;
     color: #999;
-    text-align: center;
-    margin-top: 8px;
+    text-align: center;    margin-top: 8px;
   }
 
   /* Poll Modal */
@@ -347,7 +343,7 @@
     border-radius: 8px;
     font-size: 14px;
     margin-bottom: 12px;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease;  
   }
 
   .modal-input:focus {
@@ -397,7 +393,7 @@
   .modal-actions {
     display: flex;
     gap: 8px;
-    justify-content: flex-end;
+    justify-content: flex-end;  
   }
 
   /* File Message */
@@ -447,7 +443,7 @@
   .video-msg {
     max-width: 280px;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: hidden;  
   }
 
   .video-msg video {
@@ -497,8 +493,7 @@
 
   .attach-menu button {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column;    align-items: center;
     gap: 6px;
     padding: 12px;
     background: white;
@@ -547,8 +542,7 @@
     padding-right: 20px;
     border-radius: 18px;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
+    pointer-events: none;    transition: opacity 0.2s ease;
     z-index: 1;
   }
 
@@ -597,7 +591,6 @@
   .inline-reply-preview.active {
     display: flex;
   }
-
   .inline-reply-preview-name {
     font-weight: 600;
     color: #87CEEB;
@@ -632,7 +625,7 @@
 
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
+  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>OurChat</span></div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
@@ -647,8 +640,7 @@
 
 <aside id="sideMenu" class="side-menu">
   <div class="profile-section">
-    <div class="profile-pic" id="profilePic"><i class="fa-solid fa-user"></i></div>
-    <h3 id="userName">User</h3>
+    <div class="profile-pic" id="profilePic"><i class="fa-solid fa-user"></i></div>    <h3 id="userName">User</h3>
     <label class="upload-btn"><i class="fa-solid fa-camera"></i> Change Photo<input type="file" id="profileUpload" accept="image/*" hidden></label>
   </div>
   <nav class="menu-nav">
@@ -698,7 +690,6 @@
   <div class="reply-content"><i class="fa-solid fa-reply"></i><div><div class="reply-name" id="replyName"></div><div class="reply-text" id="replyText"></div></div></div>
   <button id="cancelReply" class="icon-btn small"><i class="fa-solid fa-xmark"></i></button>
 </div>
-
 <footer class="chat-input">
   <div style="width:100%">
     <!-- Inline Reply Preview -->
@@ -747,8 +738,7 @@
 </div>
 
 <div id="msgOptions" class="msg-options hidden">
-  <button data-action="reply"><i class="fa-solid fa-reply"></i> Reply</button>
-  <button data-action="copy"><i class="fa-solid fa-copy"></i> Copy</button>
+  <button data-action="reply"><i class="fa-solid fa-reply"></i> Reply</button>  <button data-action="copy"><i class="fa-solid fa-copy"></i> Copy</button>
   <button data-action="edit" id="editMsgBtn" class="hidden"><i class="fa-solid fa-pen"></i> Edit</button>
   <button data-action="delete" id="deleteMsgBtn" class="hidden"><i class="fa-solid fa-trash"></i> Delete</button>
 </div>
@@ -797,7 +787,6 @@ const firebaseConfig = {
   measurementId: "G-ZQY3V6PR2K",
   databaseURL: "https://chatweb-3ecb0-default-rtdb.firebaseio.com/"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
@@ -847,7 +836,6 @@ messageInput.addEventListener('input', () => {
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(() => set(typingRef, { typing: false, timestamp: Date.now() }), 2000);
 });
-
 onValue(ref(rtdb, 'typing'), (snapshot) => {
   const data = snapshot.val() || {};
   const typingIndicator = document.getElementById('typingIndicator');
@@ -897,7 +885,6 @@ document.addEventListener('click', (e) => {
   if (!attachMenu.contains(e.target) && e.target.id !== 'attachBtn') attachMenu.classList.add('hidden');
   if (!emojiPicker.contains(e.target) && e.target.id !== 'emojiBtn') emojiPicker.classList.remove('active');
 });
-
 document.getElementById('imageBtn').addEventListener('click', () => document.getElementById('imageUpload').click());
 document.getElementById('imageUpload').addEventListener('change', (e) => {
   const file = e.target.files[0]; if (!file) return;
@@ -947,8 +934,7 @@ document.getElementById('fileUpload').addEventListener('change', (e) => {
   const reader = new FileReader();
   reader.onload = async (ev) => {
     await sendMessage({ 
-      type: 'file', 
-      file: ev.target.result, 
+      type: 'file',       file: ev.target.result, 
       fileName: file.name,
       fileSize: file.size,
       fileType: file.type,
@@ -997,8 +983,7 @@ document.getElementById('voiceRecordBtn').addEventListener('click', async () => 
     mediaRecorder.start();
     
     attachBtn.innerHTML = '<i class="fa-solid fa-stop" style="color:#F44336"></i>';
-    attachBtn.classList.add('recording');
-    messageInput.placeholder = "🎙️ Recording... Tap + to stop";
+    attachBtn.classList.add('recording');    messageInput.placeholder = "🎙️ Recording... Tap + to stop";
   } catch (err) { 
     alert('Microphone access denied'); 
   }
@@ -1047,8 +1032,7 @@ document.getElementById('videoRecordBtn').addEventListener('click', async () => 
 const pollModal = document.getElementById('pollModal');
 document.getElementById('pollBtn').addEventListener('click', () => {
   pollModal.classList.remove('hidden');
-  attachMenu.classList.add('hidden');
-});
+  attachMenu.classList.add('hidden');});
 
 document.getElementById('cancelPoll').addEventListener('click', () => {
   pollModal.classList.add('hidden');
@@ -1097,8 +1081,7 @@ document.getElementById('createPoll').addEventListener('click', async () => {
     </div>
     <div class="modal-option-row">
       <input type="text" class="modal-input poll-option-input" placeholder="Option 2">
-    </div>
-  `;
+    </div>  `;
 });
 
 let currentReply = null;
@@ -1147,8 +1130,7 @@ const messagesDiv = document.getElementById('messages');
 let allMessages = [], pinnedMessages = [];
 let isFirstLoad = true;
 let unreadCount = 0;
-let isAtBottom = true;
-let lastMessageCount = 0;
+let isAtBottom = true;let lastMessageCount = 0;
 
 const q = query(collection(db, 'messages'), orderBy('timestamp', 'asc'));
 onSnapshot(q, async (snapshot) => {
@@ -1197,8 +1179,7 @@ onSnapshot(q, async (snapshot) => {
     }
     
     lastMessageCount = allMessages.length;
-  }
-});
+  }});
 
 // ========== SCROLL TO BOTTOM BUTTON ==========
 const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
@@ -1247,8 +1228,7 @@ function updateScrollButton() {
 }
 
 // ========== TEXT FORMATTING ==========
-function formatText(text) {
-  if (!text) return '';
+function formatText(text) {  if (!text) return '';
   let html = escapeHtml(text);
   // Bold: *text*
   html = html.replace(/\*([^*\n]+)\*/g, '<strong>$1</strong>');
@@ -1297,8 +1277,7 @@ function renderMessages(msgs) {
             <i class="fa-solid fa-download"></i>
           </a>
         </div>
-      `;
-    } else if (data.type === 'poll') {
+      `;    } else if (data.type === 'poll') {
       contentHtml = renderPoll(data, msg.id);
     } else {
       contentHtml = formatText(data.text) + (data.edited ? ' <span style="font-size:10px;opacity:0.6">edited</span>' : '');
@@ -1347,8 +1326,7 @@ function initializeSlideToReply() {
       startX = e.touches[0].clientX;
       isSwiping = false;
       bubble.classList.add('swiping');
-    }, { passive: true });
-    
+    }, { passive: true });    
     bubble.addEventListener('touchmove', (e) => {
       if (!startX) return;
       
@@ -1397,8 +1375,7 @@ function initializeSlideToReply() {
       isSwiping = false;
     });
     
-    // Mouse events for desktop
-    let mouseDown = false;
+    // Mouse events for desktop    let mouseDown = false;
     
     bubble.addEventListener('mousedown', (e) => {
       if (e.button !== 0) return; // Only left click
@@ -1447,8 +1424,7 @@ function initializeSlideToReply() {
       currentX = 0;
       isSwiping = false;
     });
-  });
-}
+  });}
 
 // ========== POLL RENDERING & VOTING ==========
 function renderPoll(data, msgId) {
@@ -1498,7 +1474,6 @@ document.addEventListener('click', async (e) => {
     }
   }
 });
-
 function renderPinned() {
   const pinnedDiv = document.getElementById('pinnedMessages');
   const pinnedList = document.getElementById('pinnedList');
@@ -1547,8 +1522,7 @@ messagesDiv.addEventListener('mouseleave', endPress);
 
 function startPress(e) {
   const bubble = e.target.closest('.message-bubble');
-  if (!bubble) return;
-  selectedMsg = allMessages.find(m => m.id === bubble.dataset.id);
+  if (!bubble) return;  selectedMsg = allMessages.find(m => m.id === bubble.dataset.id);
   isMeSelected = selectedMsg.data.sender === userName;
   longPressTimer = setTimeout(() => {
     const rect = bubble.getBoundingClientRect();
@@ -1597,7 +1571,6 @@ function closeAllPopups() {
   reactionPicker.classList.remove('active'); 
   msgOptions.classList.add('hidden');
 }
-
 function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 function formatTime(ts) { if (!ts) return ''; const d = ts.toDate(); return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 

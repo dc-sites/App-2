@@ -652,7 +652,7 @@
 
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
+  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>OurChat</span></div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
@@ -1221,9 +1221,13 @@ onSnapshot(q, async (snapshot) => {
     isFirstLoad = false;
     lastMessageCount = allMessages.length;
     
-    // Wait for container to be visible, then scroll to bottom
+    // Wait for container to be visible, then reliably scroll to the LAST message
     setTimeout(() => {
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      messagesDiv.scrollTo({
+        top: messagesDiv.scrollHeight,
+        behavior: 'auto'
+      });
+      isAtBottom = true;
       // Hide scroll button initially since we're at bottom
       document.getElementById('scrollToBottomBtn').classList.add('hidden');
     }, 300);
@@ -1238,7 +1242,10 @@ onSnapshot(q, async (snapshot) => {
       if (isAtBottom) {
         // If at bottom, scroll to show new messages
         setTimeout(() => {
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          messagesDiv.scrollTo({
+            top: messagesDiv.scrollHeight,
+            behavior: 'auto'
+          });
         }, 100);
       } else if (hasNewFromOthers) {
         // If not at bottom and new messages from others, increment unread count

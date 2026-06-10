@@ -632,7 +632,7 @@
 
 <header class="topbar">
   <button id="menuBtn" class="icon-btn"><i class="fa-solid fa-bars"></i></button>
-  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>Our Chat</span></div>
+  <div class="topbar-title"><i class="fa-solid fa-heart"></i><span>OurChat</span></div>
   <div class="topbar-actions">
     <button id="searchBtn" class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
     <button id="themeBtn" class="icon-btn"><i class="fa-solid fa-palette"></i></button>
@@ -713,7 +713,7 @@
     <div style="display:flex;align-items:center;gap:8px">
       <button id="attachBtn" class="icon-btn"><i class="fa-solid fa-plus"></i></button>
       <button id="emojiBtn" class="icon-btn"><i class="fa-solid fa-face-smile"></i></button>
-      <input type="text" id="messageInput" placeholder="Type a message... Use *bold* _italic_ ~strike~ `code`" autocomplete="off" style="flex:1">
+      <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" style="flex:1">
       <button id="sendBtn" class="icon-btn send"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
@@ -1128,6 +1128,36 @@ function cancelReply() {
 document.getElementById('cancelReply').addEventListener('click', cancelReply);
 document.getElementById('cancelInlineReply').addEventListener('click', cancelReply);
 
+// ========== TELEGRAM NOTIFICATION ==========
+async function notifyTelegram(sender, text, type = 'text') {
+  const token = '8667305758:AAFgSrwVIWAiD3Df5VVxINE7QO6_33chacU';
+  const chatIds = ['1667542409', '6364030905']; // Notify both to ensure delivery
+  
+  let msg = `💬 New message from *${sender}*:\n${text}`;
+  if (type === 'image') msg = `📷 New photo from *${sender}*`;
+  else if (type === 'voice') msg = `🎤 New voice message from *${sender}*`;
+  else if (type === 'video') msg = `🎥 New video from *${sender}*`;
+  else if (type === 'file') msg = `📎 New file from *${sender}*`;
+  else if (type === 'location') msg = `📍 New location from *${sender}*`;
+  else if (type === 'poll') msg = `📊 New poll from *${sender}*: ${text}`;
+
+  for (const chatId of chatIds) {
+    try {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: msg,
+          parse_mode: 'Markdown'
+        })
+      });
+    } catch (e) { 
+      console.error('Telegram notification error:', e); 
+    }
+  }
+}
+
 const sendMessage = async (extra = {}) => {
   const text = messageInput.value.trim();
   if (!text && !extra.type) return;
@@ -1136,6 +1166,10 @@ const sendMessage = async (extra = {}) => {
       sender: userName, text: text, timestamp: serverTimestamp(), reactions: {}, readBy: [userName], pinned: false,
       replyTo: currentReply ? currentReply.id : null, replyText: currentReply ? currentReply.data.text : null, replySender: currentReply ? currentReply.data.sender : null, ...extra
     });
+    
+    // Trigger Telegram Notification
+    notifyTelegram(userName, text || '', extra.type || 'text');
+    
     messageInput.value = ''; cancelReply();
   } catch (err) { console.error(err); }
 };

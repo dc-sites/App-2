@@ -175,6 +175,26 @@
     display: none;
   }
 
+  /* ========== DATE SEPARATOR ========== */
+  .date-separator {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .date-separator-text {
+    background: #E8F4F8;
+    color: #667781;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
   /* Smooth Animations */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
@@ -1297,12 +1317,45 @@ function formatText(text) {
   return html;
 }
 
+// ========== DATE SEPARATOR ==========
+function formatDateSeparator(timestamp) {
+  if (!timestamp) return '';
+  const msgDate = timestamp.toDate();
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const isToday = msgDate.toDateString() === today.toDateString();
+  const isYesterday = msgDate.toDateString() === yesterday.toDateString();
+  
+  if (isToday) return 'Today';
+  if (isYesterday) return 'Yesterday';
+  
+  // Format as actual date (e.g., "June 10, 2026")
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return msgDate.toLocaleDateString('en-US', options);
+}
+
 function renderMessages(msgs) {
   messagesDiv.innerHTML = '';
+  let lastDate = null;
+  
   msgs.forEach(msg => {
     const data = msg.data;
     
     if (data.deleted) return;
+
+    // Check if we need to add a date separator
+    if (data.timestamp) {
+      const msgDate = data.timestamp.toDate().toDateString();
+      if (msgDate !== lastDate) {
+        const separator = document.createElement('div');
+        separator.className = 'date-separator';
+        separator.innerHTML = `<span class="date-separator-text">${formatDateSeparator(data.timestamp)}</span>`;
+        messagesDiv.appendChild(separator);
+        lastDate = msgDate;
+      }
+    }
 
     const isMe = data.sender === userName;
     const msgEl = document.createElement('div');
